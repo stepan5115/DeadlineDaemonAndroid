@@ -19,4 +19,12 @@ class SharedPrefs(context: Context) {
             prefs.getString("password", null)
         )
     }
+
+    fun clearCredentials() {
+        with(prefs.edit()) {
+            remove("username")
+            remove("password")
+            apply()
+        }
+    }
 }

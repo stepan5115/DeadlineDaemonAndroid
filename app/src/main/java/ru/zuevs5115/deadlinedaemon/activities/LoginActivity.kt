@@ -71,20 +71,19 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-//        val (savedUser, savedPass) = SharedPrefs(this).getCredentials()
-//        if (!savedUser.isNullOrEmpty() && !savedPass.isNullOrEmpty()) {
-//            Log.d(TAG, "Saved credentials found: username='$savedUser', password='${"*".repeat(savedPass.length)}'")
-//            binding.etUsername.setText(savedUser)
-//            binding.etPassword.setText(savedPass)
-//            binding.btnLogin.performClick()
-//        } else {
-//            Log.d(TAG, "No saved credentials found")
-//        }
+        val (savedUser, savedPass) = SharedPrefs(this).getCredentials()
+        if (!savedUser.isNullOrEmpty() && !savedPass.isNullOrEmpty()) {
+            Log.d(TAG, "Saved credentials found: username='$savedUser', password='${"*".repeat(savedPass.length)}'")
+            binding.etUsername.setText(savedUser)
+            binding.etPassword.setText(savedPass)
+            binding.btnLogin.performClick()
+        } else {
+            Log.d(TAG, "No saved credentials found")
+        }
         val username = intent.getStringExtra("username")
         val password = intent.getStringExtra("password")
 
         if (!username.isNullOrEmpty()) binding.etUsername.setText(username)
         if (!password.isNullOrEmpty()) binding.etPassword.setText(password)
-
     }
 }
