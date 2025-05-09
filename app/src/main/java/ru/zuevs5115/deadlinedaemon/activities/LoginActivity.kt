@@ -20,7 +20,6 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(TAG, "onCreate called")
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -66,8 +65,10 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.btnSwitchToSignUp.setOnClickListener {
-            Log.d(TAG, "Switching to SignUpActivity")
-            startActivity(Intent(this, SignUpActivity::class.java))
+            val intent = Intent(this, SignUpActivity::class.java)
+            intent.putExtra("username", binding.etUsername.text.toString())
+            intent.putExtra("password", binding.etPassword.text.toString())
+            startActivity(intent)
         }
 
 //        val (savedUser, savedPass) = SharedPrefs(this).getCredentials()
@@ -79,5 +80,11 @@ class LoginActivity : AppCompatActivity() {
 //        } else {
 //            Log.d(TAG, "No saved credentials found")
 //        }
+        val username = intent.getStringExtra("username")
+        val password = intent.getStringExtra("password")
+
+        if (!username.isNullOrEmpty()) binding.etUsername.setText(username)
+        if (!password.isNullOrEmpty()) binding.etPassword.setText(password)
+
     }
 }

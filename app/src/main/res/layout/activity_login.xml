@@ -1,37 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="24dp"
+    android:background="@color/colorSurface"
+    android:gravity="center_horizontal">
 
-    <EditText
-        android:id="@+id/etUsername"
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/ic_login"
+        android:layout_marginBottom="24dp"
+        app:tint="@color/colorPrimary" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome Back"
+        android:textSize="24sp"
+        android:textColor="@color/colorOnBackground"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login to continue"
+        android:textSize="16sp"
+        android:textColor="@color/colorOutline"
+        android:layout_marginBottom="32dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/usernameInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Username"/>
+        android:layout_marginBottom="16dp"
+        app:boxStrokeColor="@color/colorOutline"
+        app:boxStrokeWidth="1dp"
+        app:hintTextColor="@color/colorOnBackground"
+        app:hintAnimationEnabled="true"
+        app:helperText="Username">
 
-    <EditText
-        android:id="@+id/etPassword"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Username"
+            android:textColor="@color/colorOnBackground"
+            android:textColorHint="@color/colorOutline"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/passwordInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Password"
-        android:inputType="textPassword"/>
+        android:layout_marginBottom="16dp"
+        app:boxStrokeColor="@color/colorOutline"
+        app:boxStrokeWidth="1dp"
+        app:hintTextColor="@color/colorOnBackground"
+        app:hintAnimationEnabled="true"
+        app:helperText="Password">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:textColor="@color/colorOnBackground"
+            android:textColorHint="@color/colorOutline"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btnLogin"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Login"/>
+        android:layout_height="48dp"
+        android:text="Login"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/colorOnPrimary"
+        android:layout_marginBottom="16dp"
+        style="@style/Widget.MaterialComponents.Button" />
 
     <TextView
         android:id="@+id/tvError"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/red"/>
+        android:textColor="@color/colorError"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:visibility="gone" />
 
-    <Button
+    <TextView
         android:id="@+id/btnSwitchToSignUp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Switch to Sign Up"/>
+        android:text="Don't have an account? Sign Up"
+        android:textColor="@color/colorPrimary"
+        android:gravity="center" />
 </LinearLayout>
