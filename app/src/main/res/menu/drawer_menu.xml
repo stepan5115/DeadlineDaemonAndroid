@@ -1,29 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Заголовок первой группы -->
+    <item
+        android:icon="@drawable/ic_header_main"
+        app:titleTextColor="@color/cardview_light_background"
+        android:title="Основные разделы"
+        android:enabled="false"
+        app:actionLayout="@layout/nav_menu_header"/>
+
+    <!-- Основные пункты меню -->
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_person"
-            android:title="Профиль"/>
+            android:title="Профиль"
+            app:iconTint="@color/nav_menu_icon"
+            app:titleTextColor="@color/nav_menu_text"/>
+
         <item
             android:id="@+id/nav_tasks"
             android:icon="@drawable/ic_assignment"
-            android:title="Задания"/>
+            android:title="Задания"
+            app:iconTint="@color/nav_menu_icon"
+            app:titleTextColor="@color/nav_menu_text"/>
+
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings"
-            android:title="Настройки"/>
+            android:title="Настройки"
+            app:iconTint="@color/nav_menu_icon"
+            app:titleTextColor="@color/nav_menu_text"/>
     </group>
-    <item android:title="Действия">
-        <menu>
-            <item
-                android:id="@+id/nav_refresh"
-                android:icon="@drawable/ic_refresh"
-                android:title="Обновить данные"/>
-            <item
-                android:id="@+id/nav_logout"
-                android:icon="@drawable/ic_exit"
-                android:title="Выйти"/>
-        </menu>
-    </item>
+
+    <!-- Заголовок второй группы -->
+    <item
+        android:icon="@drawable/ic_header_main"
+        app:titleTextColor="@color/cardview_light_background"
+        android:title="Действия"
+        android:enabled="false"
+        app:actionLayout="@layout/nav_menu_header"/>
+
+    <!-- Действия -->
+    <group>
+        <item
+            android:id="@+id/nav_refresh"
+            android:icon="@drawable/ic_refresh"
+            android:title="Обновить данные"
+            app:iconTint="@color/nav_menu_icon"
+            app:titleTextColor="@color/nav_menu_text"/>
+
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_exit"
+            android:title="Выйти"
+            app:iconTint="@color/colorError"
+            app:titleTextColor="@color/colorError"/>
+    </group>
 </menu>

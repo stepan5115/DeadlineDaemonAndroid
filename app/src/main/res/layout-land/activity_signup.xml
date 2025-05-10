@@ -1,124 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:padding="24dp"
+        android:background="@color/colorSurface">
+
+        <!-- Левая часть: логотип и приветствие -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingEnd="16dp">
+
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/ic_signup"
+                app:tint="@color/colorPrimary"
+                android:layout_marginBottom="24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Join Us"
+                android:textSize="24sp"
+                android:textColor="@color/colorOnBackground"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sign up to get started"
+                android:textSize="16sp"
+                android:textColor="@color/colorOutline" />
+        </LinearLayout>
+
+        <!-- Правая часть: форма -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingStart="16dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/usernameInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:boxStrokeColor="@color/colorOutline"
+                app:boxStrokeWidth="1dp"
+                app:hintTextColor="@color/colorOnBackground"
+                app:hintAnimationEnabled="true"
+                app:helperText="Username">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Username"
+                    android:textColor="@color/colorOnBackground"
+                    android:textColorHint="@color/colorOutline"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passwordInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:boxStrokeColor="@color/colorOutline"
+                app:boxStrokeWidth="1dp"
+                app:hintTextColor="@color/colorOnBackground"
+                app:hintAnimationEnabled="true"
+                app:helperText="Password">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Password"
+                    android:inputType="textPassword"
+                    android:textColor="@color/colorOnBackground"
+                    android:textColorHint="@color/colorOutline"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btnSignUp"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Sign Up"
+                android:backgroundTint="@color/colorPrimary"
+                android:textColor="@color/colorOnPrimary"
+                android:layout_marginBottom="16dp"
+                style="@style/Widget.MaterialComponents.Button" />
+
+            <TextView
+                android:id="@+id/tvError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorError"
+                android:layout_marginBottom="16dp"
+                android:gravity="center"
+                />
+
+            <TextView
+                android:id="@+id/btnSwitchToLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Already have an account? Log In"
+                android:textColor="@color/colorPrimary"
+                android:gravity="center" />
+        </LinearLayout>
+    </LinearLayout>
+    <FrameLayout
+    android:id="@+id/loadingOverlay"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:padding="24dp"
-    android:background="@color/colorSurface">
+    android:background="#80000000"
+    android:visibility="gone"
+    android:clickable="true"
+    android:focusable="true"
+    android:elevation="10dp">
 
-    <!-- Левая часть: логотип и приветствие -->
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:paddingEnd="16dp">
-
-        <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/ic_signup"
-            app:tint="@color/colorPrimary"
-            android:layout_marginBottom="24dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Join Us"
-            android:textSize="24sp"
-            android:textColor="@color/colorOnBackground"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sign up to get started"
-            android:textSize="16sp"
-            android:textColor="@color/colorOutline" />
-    </LinearLayout>
-
-    <!-- Правая часть: форма -->
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:paddingStart="16dp">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/usernameInputLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:boxStrokeColor="@color/colorOutline"
-            app:boxStrokeWidth="1dp"
-            app:hintTextColor="@color/colorOnBackground"
-            app:hintAnimationEnabled="true"
-            app:helperText="Username">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etUsername"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Username"
-                android:textColor="@color/colorOnBackground"
-                android:textColorHint="@color/colorOutline"
-                android:focusable="true"
-                android:focusableInTouchMode="true" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/passwordInputLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:boxStrokeColor="@color/colorOutline"
-            app:boxStrokeWidth="1dp"
-            app:hintTextColor="@color/colorOnBackground"
-            app:hintAnimationEnabled="true"
-            app:helperText="Password">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Password"
-                android:inputType="textPassword"
-                android:textColor="@color/colorOnBackground"
-                android:textColorHint="@color/colorOutline"
-                android:focusable="true"
-                android:focusableInTouchMode="true" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <Button
-            android:id="@+id/btnSignUp"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="Sign Up"
-            android:backgroundTint="@color/colorPrimary"
-            android:textColor="@color/colorOnPrimary"
-            android:layout_marginBottom="16dp"
-            style="@style/Widget.MaterialComponents.Button" />
-
-        <TextView
-            android:id="@+id/tvError"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorError"
-            android:layout_marginBottom="16dp"
-            android:gravity="center"
-            />
-
-        <TextView
-            android:id="@+id/btnSwitchToLogin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Already have an account? Log In"
-            android:textColor="@color/colorPrimary"
-            android:gravity="center" />
-    </LinearLayout>
-</LinearLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center"/>
+    </FrameLayout>
+</FrameLayout>

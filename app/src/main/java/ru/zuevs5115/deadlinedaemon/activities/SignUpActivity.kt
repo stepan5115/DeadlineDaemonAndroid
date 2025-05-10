@@ -3,6 +3,7 @@ package ru.zuevs5115.deadlinedaemon.activities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,10 +34,11 @@ class SignUpActivity : AppCompatActivity() {
             }
 
             CoroutineScope(Dispatchers.IO).launch {
+                withContext(Dispatchers.Main) { showLoading(true) }
                 try {
                     val response = signUpService.signUp(username, password)
-
                     withContext(Dispatchers.Main) {
+                        showLoading(false)
                         if (response.isSuccessful) {
                             val responseText = response.body()?.message ?: ""
                             if (responseText == "OK") {
@@ -54,6 +56,7 @@ class SignUpActivity : AppCompatActivity() {
 
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
+                        showLoading(false)
                         binding.tvError.text = "Ошибка сети: ${e.message}"
                     }
                 }
@@ -73,5 +76,12 @@ class SignUpActivity : AppCompatActivity() {
 
         binding.etUsername.setText(username)
         binding.etPassword.setText(password)
+    }
+    private fun showLoading(show: Boolean) {
+        binding.loadingOverlay.visibility = if (show) View.VISIBLE else View.GONE
+        binding.btnSignUp.isEnabled = !show
+        binding.etUsername.isEnabled = !show
+        binding.etPassword.isEnabled = !show
+        if (!show) binding.tvError.text = ""
     }
 }

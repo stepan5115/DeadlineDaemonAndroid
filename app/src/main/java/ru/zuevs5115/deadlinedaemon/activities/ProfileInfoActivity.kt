@@ -5,11 +5,13 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,7 +44,24 @@ class ProfileInfoActivity : AppCompatActivity() {
         }
 
         setupNavigation()
-        updateProfileData()
+        if (savedInstanceState != null) {
+            try {
+                binding.tvUserId.text = savedInstanceState.getString("id")
+                binding.tvUsername.text = savedInstanceState.getString("name")
+                binding.tvGroups.text = savedInstanceState.getString("groups")
+                binding.tvCanEditTasks.text = savedInstanceState.getString("canEdit")
+                binding.tvAllowNotifications.text = savedInstanceState.getString("notifications")
+                binding.tvNotificationInterval.text = savedInstanceState.getString("interval")
+                binding.tvExcludedSubjects.text = savedInstanceState.getString("excludedSubjects")
+                binding.tvCompletedAssignments.text = savedInstanceState.getString("completeAssignments")
+                binding.tvLastUpdate.text = savedInstanceState.getString("lastUpdate") ?: "Не обновлялось"
+            }
+            catch (e: Throwable) {
+                updateProfileData()
+            }
+        } else {
+            updateProfileData()
+        }
     }
 
     private fun setupNavigation() {
@@ -130,11 +149,18 @@ class ProfileInfoActivity : AppCompatActivity() {
     private fun updateProfileData() {
         val (savedUser, savedPass) = SharedPrefs(this).getCredentials()
         if (savedUser != null && savedPass != null) {
+            showLoadingOverlay()
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val response = infoService.getInfo(savedUser, savedPass)
                     withContext(Dispatchers.Main) {
+                        hideLoadingOverlay()
                         if (response.isSuccessful) {
+                            // Обновляем время последнего обновления
+                            val lastUpdate = System.currentTimeMillis()
+                            val formattedTime = TimeFormatter.formatTimestamp(lastUpdate)
+                            binding.tvLastUpdate.text = "Последнее обновление: $formattedTime"
+
                             val responseText = response.body()?.message ?: ""
                             loadProfileData(responseText)
                         } else {
@@ -145,6 +171,7 @@ class ProfileInfoActivity : AppCompatActivity() {
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
+                        hideLoadingOverlay()
                         Log.e("ProfileInfo", "Network error", e)
                         Toast.makeText(this@ProfileInfoActivity, "Network error occurred", Toast.LENGTH_SHORT).show()
                     }
@@ -166,5 +193,24 @@ class ProfileInfoActivity : AppCompatActivity() {
             super.onBackPressed()
         }
     }
+    private fun showLoadingOverlay() {
+        binding.loadingOverlay.visibility = View.VISIBLE
+    }
 
+    private fun hideLoadingOverlay() {
+        binding.loadingOverlay.visibility = View.GONE
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("id", binding.tvUserId.text.toString())
+        outState.putString("name", binding.tvUsername.text.toString())
+        outState.putString("groups", binding.tvGroups.text.toString())
+        outState.putString("canEdit", binding.tvCanEditTasks.text.toString())
+        outState.putString("notifications", binding.tvAllowNotifications.text.toString())
+        outState.putString("interval", binding.tvNotificationInterval.text.toString())
+        outState.putString("excludedSubjects", binding.tvExcludedSubjects.text.toString())
+        outState.putString("completeAssignments", binding.tvCompletedAssignments.text.toString())
+        outState.putString("lastUpdate", binding.tvLastUpdate.text.toString())
+    }
 }

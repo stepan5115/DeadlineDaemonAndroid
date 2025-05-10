@@ -23,4 +23,10 @@
     <color name="black">#000000</color>
     <color name="teal_200">#03DAC5</color>
     <color name="teal_700">#018786</color>
+
+    <!-- Добавьте эти цвета в ваш файл res/values/colors.xml -->
+    <color name="nav_menu_text">#2D2D2D</color> <!-- colorOnSurface -->
+    <color name="nav_menu_icon">#6D7F7C</color> <!-- colorPrimary -->
+    <color name="nav_menu_header_text">#6D7F7C</color> <!-- colorPrimary -->
+    <color name="nav_menu_divider">#B0B5B1</color> <!-- colorOutline -->
 </resources>

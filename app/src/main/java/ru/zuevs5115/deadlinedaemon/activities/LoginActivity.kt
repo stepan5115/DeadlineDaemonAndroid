@@ -3,6 +3,7 @@ package ru.zuevs5115.deadlinedaemon.activities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,10 +36,11 @@ class LoginActivity : AppCompatActivity() {
             }
 
             CoroutineScope(Dispatchers.IO).launch {
+                withContext(Dispatchers.Main) { showLoading(true) }
                 try {
                     val response = authService.login(username, password)
-
                     withContext(Dispatchers.Main) {
+                        showLoading(false)
                         if (response.isSuccessful) {
                             val responseText = response.body()?.message ?: ""
                             if (responseText == "OK") {
@@ -58,6 +60,7 @@ class LoginActivity : AppCompatActivity() {
                 } catch (e: Exception) {
                     Log.e(TAG, "Network error", e)
                     withContext(Dispatchers.Main) {
+                        showLoading(false)
                         binding.tvError.text = "Ошибка сети: ${e.message}"
                     }
                 }
@@ -85,5 +88,12 @@ class LoginActivity : AppCompatActivity() {
 
         if (!username.isNullOrEmpty()) binding.etUsername.setText(username)
         if (!password.isNullOrEmpty()) binding.etPassword.setText(password)
+    }
+    private fun showLoading(show: Boolean) {
+        binding.loadingOverlay.visibility = if (show) View.VISIBLE else View.GONE
+        binding.btnLogin.isEnabled = !show
+        binding.etUsername.isEnabled = !show
+        binding.etPassword.isEnabled = !show
+        if (!show) binding.tvError.text = ""
     }
 }

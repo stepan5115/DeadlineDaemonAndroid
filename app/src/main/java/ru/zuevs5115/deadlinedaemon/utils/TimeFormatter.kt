@@ -1,6 +1,9 @@
 package ru.zuevs5115.deadlinedaemon.utils
 
+import java.text.SimpleDateFormat
 import java.time.Duration
+import java.util.Date
+import java.util.Locale
 
 
 object TimeFormatter {
@@ -19,5 +22,9 @@ object TimeFormatter {
             if (minutes > 0) append("$minutes мин. ")
             if (secs > 0 && days == 0L && hours == 0L) append("$secs сек.")
         }.trim().ifEmpty { "0 сек." }
+    }
+    fun formatTimestamp(timestamp: Long): String {
+        val format = SimpleDateFormat("dd MMM yyyy HH:mm:ss", Locale.getDefault())
+        return format.format(Date(timestamp))
     }
 }
