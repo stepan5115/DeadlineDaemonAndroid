@@ -16,7 +16,6 @@
 
         <!-- Custom Style for App Title with Gradient -->
         <item name="android:textColor">@color/colorOnPrimary</item>
-        <item name="android:background">@drawable/gradient_background</item>
 
         <!-- Customize your theme here -->
         <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>

@@ -4,6 +4,7 @@
     <color name="colorOnPrimary">#FFFFFF</color>
     <color name="colorSecondary">#A7B1B2</color> <!-- нейтральный серый -->
     <color name="colorOnSecondary">#FFFFFF</color>
+    <color name="colorPrimaryText">#4F6250</color>
 
     <!-- Поверхности -->
     <color name="colorBackground">#F4F6F5</color> <!-- светлый нейтральный фон -->
@@ -14,7 +15,7 @@
     <color name="white">#FFFFFF</color>
 
     <!-- Границы, контуры -->
-    <color name="colorOutline">#B0B5B1</color> <!-- нейтральный серый для контуров -->
+    <color name="colorOutline">#757575</color> <!-- нейтральный серый для контуров -->
 
     <!-- Ошибки -->
     <color name="colorError">#D9534F</color> <!-- мягкий красный для ошибок -->

@@ -6,30 +6,29 @@
     <item
         android:icon="@drawable/ic_header_main"
         app:titleTextColor="@color/cardview_light_background"
-        android:title="Основные разделы"
-        android:enabled="false"
-        app:actionLayout="@layout/nav_menu_header"/>
+        android:title="@string/base_sections"
+        android:enabled="false"/>
 
     <!-- Основные пункты меню -->
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_person"
-            android:title="Профиль"
+            android:title="@string/profile"
             app:iconTint="@color/nav_menu_icon"
             app:titleTextColor="@color/nav_menu_text"/>
 
         <item
             android:id="@+id/nav_tasks"
             android:icon="@drawable/ic_assignment"
-            android:title="Задания"
+            android:title="@string/assignments"
             app:iconTint="@color/nav_menu_icon"
             app:titleTextColor="@color/nav_menu_text"/>
 
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings"
-            android:title="Настройки"
+            android:title="@string/settings"
             app:iconTint="@color/nav_menu_icon"
             app:titleTextColor="@color/nav_menu_text"/>
     </group>
@@ -38,23 +37,22 @@
     <item
         android:icon="@drawable/ic_header_main"
         app:titleTextColor="@color/cardview_light_background"
-        android:title="Действия"
-        android:enabled="false"
-        app:actionLayout="@layout/nav_menu_header"/>
+        android:title="@string/actions"
+        android:enabled="false"/>
 
     <!-- Действия -->
     <group>
         <item
             android:id="@+id/nav_refresh"
             android:icon="@drawable/ic_refresh"
-            android:title="Обновить данные"
+            android:title="@string/update_data"
             app:iconTint="@color/nav_menu_icon"
             app:titleTextColor="@color/nav_menu_text"/>
 
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_exit"
-            android:title="Выйти"
+            android:title="@string/exit"
             app:iconTint="@color/colorError"
             app:titleTextColor="@color/colorError"/>
     </group>

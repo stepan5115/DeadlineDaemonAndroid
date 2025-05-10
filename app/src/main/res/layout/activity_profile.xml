@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/colorPrimary"
-                app:title="Профиль"
+                app:title="@string/profile"
                 app:titleTextColor="@color/colorOnPrimary"
                 app:navigationIcon="@drawable/ic_refresh"
                 app:menu="@menu/profile_menu"/>
@@ -62,7 +62,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Основная информация"
+                                android:text="@string/base_information"
                                 android:textColor="@color/colorPrimary"
                                 android:textSize="18sp"
                                 android:textStyle="bold"
@@ -84,7 +84,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="ID:"
+                                    android:text="@string/id_field"
                                     android:textColor="@color/colorOnSurface"
                                     android:textStyle="bold"/>
 
@@ -106,7 +106,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Имя:"
+                                    android:text="@string/name_field"
                                     android:textColor="@color/colorOnSurface"
                                     android:textStyle="bold"/>
 
@@ -128,7 +128,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Группы:"
+                                    android:text="@string/groups_field"
                                     android:textColor="@color/colorOnSurface"
                                     android:textStyle="bold"/>
 
@@ -160,7 +160,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Настройки"
+                                android:text="@string/settings"
                                 android:textColor="@color/colorPrimary"
                                 android:textSize="18sp"
                                 android:textStyle="bold"
@@ -182,7 +182,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Редактирование задач:"
+                                    android:text="@string/edit_field"
                                     android:textColor="@color/colorOnSurface"
                                     android:textStyle="bold"/>
 
@@ -204,7 +204,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Уведомления:"
+                                    android:text="@string/notification_field"
                                     android:textColor="@color/colorOnSurface"
                                     android:textStyle="bold"/>
 
@@ -226,7 +226,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Интервал уведомлений:"
+                                    android:text="@string/interval_field"
                                     android:textColor="@color/colorOnSurface"
                                     android:textStyle="bold"/>
 
@@ -248,7 +248,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Исключенные предметы:"
+                                    android:text="@string/excluded_field"
                                     android:textColor="@color/colorOnSurface"
                                     android:textStyle="bold"/>
 
@@ -280,7 +280,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Выполненные задания"
+                                android:text="@string/complete_field"
                                 android:textColor="@color/colorPrimary"
                                 android:textSize="18sp"
                                 android:textStyle="bold"
@@ -321,7 +321,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Последнее обновление:"
+                        android:text="@string/last_update_text"
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold"/>
 
@@ -331,7 +331,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:textColor="@color/colorOnSurface"
-                        android:text="Не обновлялось"/>
+                        android:text="@string/not_update"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

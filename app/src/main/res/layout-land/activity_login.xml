@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:baselineAligned="false"
         android:orientation="horizontal"
         android:padding="24dp"
         android:background="@color/colorSurface">
@@ -18,11 +20,13 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:gravity="center"
-            android:paddingEnd="16dp">
+            android:paddingEnd="16dp"
+            tools:ignore="RtlSymmetry">
 
             <ImageView
                 android:layout_width="120dp"
                 android:layout_height="120dp"
+                android:contentDescription="@string/signup_image_description"
                 android:src="@drawable/ic_login"
                 app:tint="@color/colorPrimary"
                 android:layout_marginBottom="24dp" />
@@ -30,7 +34,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Welcome Back"
+                android:text="@string/welcome_back"
                 android:textSize="24sp"
                 android:textColor="@color/colorOnBackground"
                 android:textStyle="bold"
@@ -39,7 +43,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Login to continue"
+                android:text="@string/login_to_continue"
                 android:textSize="16sp"
                 android:textColor="@color/colorOutline" />
         </LinearLayout>
@@ -51,7 +55,8 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:gravity="center"
-            android:paddingStart="16dp">
+            android:paddingStart="16dp"
+            tools:ignore="RtlSymmetry">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/usernameInputLayout"
@@ -68,7 +73,7 @@
                     android:id="@+id/etUsername"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Username"
+                    android:hint="@string/username_hint"
                     android:textColor="@color/colorOnBackground"
                     android:textColorHint="@color/colorOutline"
                     android:focusable="true"
@@ -90,7 +95,7 @@
                     android:id="@+id/etPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Password"
+                    android:hint="@string/password_hint"
                     android:inputType="textPassword"
                     android:textColor="@color/colorOnBackground"
                     android:textColorHint="@color/colorOutline"
@@ -102,7 +107,7 @@
                 android:id="@+id/btnLogin"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:text="Login"
+                android:text="@string/login"
                 android:backgroundTint="@color/colorPrimary"
                 android:textColor="@color/colorOnPrimary"
                 android:layout_marginBottom="16dp"
@@ -121,7 +126,7 @@
                 android:id="@+id/btnSwitchToSignUp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Don't have an account? Sign Up"
+                android:text="@string/switch_to_signup"
                 android:textColor="@color/colorPrimary"
                 android:gravity="center" />
         </LinearLayout>

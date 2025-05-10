@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,6 +15,7 @@
         <ImageView
             android:layout_width="120dp"
             android:layout_height="120dp"
+            android:contentDescription="@string/login_image_description"
             android:src="@drawable/ic_login"
             android:layout_marginBottom="24dp"
             app:tint="@color/colorPrimary" />
@@ -22,7 +23,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Welcome Back"
+            android:text="@string/welcome_back"
             android:textSize="24sp"
             android:textColor="@color/colorOnBackground"
             android:textStyle="bold"
@@ -31,7 +32,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Login to continue"
+            android:text="@string/login_to_continue"
             android:textSize="16sp"
             android:textColor="@color/colorOutline"
             android:layout_marginBottom="32dp" />
@@ -51,7 +52,7 @@
                 android:id="@+id/etUsername"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Username"
+                android:hint="@string/username_hint"
                 android:textColor="@color/colorOnBackground"
                 android:textColorHint="@color/colorOutline"
                 android:focusable="true"
@@ -73,7 +74,7 @@
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Password"
+                android:hint="@string/password_hint"
                 android:inputType="textPassword"
                 android:textColor="@color/colorOnBackground"
                 android:textColorHint="@color/colorOutline"
@@ -85,7 +86,7 @@
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:text="Login"
+            android:text="@string/login"
             android:backgroundTint="@color/colorPrimary"
             android:textColor="@color/colorOnPrimary"
             android:layout_marginBottom="16dp"
@@ -104,7 +105,7 @@
             android:id="@+id/btnSwitchToSignUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Don't have an account? Sign Up"
+            android:text="@string/switch_to_signup"
             android:textColor="@color/colorPrimary"
             android:gravity="center" />
     </LinearLayout>

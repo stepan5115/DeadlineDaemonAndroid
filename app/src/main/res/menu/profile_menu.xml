@@ -4,7 +4,7 @@
     <item
         android:id="@+id/action_refresh"
         android:icon="@drawable/ic_refresh_white"
-        android:title="Обновить"
+        android:title="@string/update"
         app:iconTint="@color/colorOnPrimary"
         app:showAsAction="ifRoom"/>
 </menu>
