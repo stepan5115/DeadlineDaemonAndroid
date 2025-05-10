@@ -4,8 +4,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiClient {
+    //url for request/response
     private const val BASE_URL = "http://192.168.50.69:8080/api/"
 
+    //initial retrofit
     private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -13,6 +15,7 @@ object ApiClient {
             .build()
     }
 
+    //add all services
     val authService: AuthService
         get() = retrofit.create(AuthService::class.java)
     val signUpService: SignUpService

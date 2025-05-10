@@ -1,5 +1,7 @@
 package ru.zuevs5115.deadlinedaemon.utils
 
+import android.content.Context
+import ru.zuevs5115.deadlinedaemon.R
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.util.Date
@@ -7,8 +9,8 @@ import java.util.Locale
 
 
 object TimeFormatter {
-    fun formatNotificationInterval(seconds: Int?): String {
-        if (seconds == null) return "Не задан"
+    fun formatNotificationInterval(seconds: Int?, context: Context): String {
+        if (seconds == null) return context.getString(R.string.not_specified)
 
         val duration = Duration.ofSeconds(seconds.toLong())
         val days = duration.toDays()

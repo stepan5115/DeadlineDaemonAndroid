@@ -5,19 +5,20 @@ import retrofit2.Response
 import ru.zuevs5115.deadlinedaemon.api.ErrorResponse
 
 object ErrorHandler {
-    // Функция для обработки ошибки
+    //Error process
     fun handleError(response: Response<*>): String {
         return if (response.isSuccessful) {
-            // Если ответ успешен, просто возвращаем сообщение
+            //If success
             "OK"
         } else {
-            // Если ответ не успешен, извлекаем errorBody и парсим его
+            //Get response body
             val errorBody = response.errorBody()?.string()
             return try {
+                //parse and return message
                 val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-                errorResponse.message // Возвращаем сообщение из ошибки
+                errorResponse.message
             } catch (e: Exception) {
-                "Неизвестная ошибка" // Если не удается распарсить ошибку, возвращаем общий текст
+                "Unknown error"
             }
         }
     }

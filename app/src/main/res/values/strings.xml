@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">DeadlineDaemon</string>
+    <string name="network_error">Ошибка сети: %1$s</string>
+    <string name="last_update">Последнее обновление: %1$s</string>
+    <string name="get_username_and_password">Введите имя пользователя и пароль</string>
+    <string name="not_update">Не обновлялось</string>
+    <string name="on_notifications">Включены</string>
+    <string name="off_notifications">Выключены</string>
+    <string name="failed_load">Ошибка загрузки данных</string>
+    <string name="not_specified">Не задан</string>
 </resources>
