@@ -6,6 +6,6 @@ data class Assignment(
     var description: String,
     var groups: Set<String>,
     var deadline: String,
-    var subjectId: Long,
+    var subject: String,
     var lastNotificationTime: Long = 0
 )

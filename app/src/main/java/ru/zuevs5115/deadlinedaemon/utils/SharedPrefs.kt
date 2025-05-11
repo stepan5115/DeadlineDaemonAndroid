@@ -24,6 +24,17 @@ class SharedPrefs(context: Context) {
         return prefs.getString("info", null)
     }
 
+    fun saveLastUpdate(lastUpdate: Long) {
+        prefs.edit().apply {
+            putLong("lastUpdate", lastUpdate)
+            apply()
+        }
+    }
+
+    fun getLastUpdate() : Long {
+        return prefs.getLong("lastUpdate", 0)
+    }
+
     fun getCredentials(): Pair<String?, String?> {
         return Pair(
             prefs.getString("username", null),

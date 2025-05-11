@@ -7,6 +7,7 @@
     <string name="on_notifications">Включены</string>
     <string name="off_notifications">Выключены</string>
     <string name="failed_load">Ошибка загрузки данных</string>
+    <string name="failed_load_assignments">Ошибка загрузки заданий</string>
     <string name="not_specified">Не задан</string>
     <string name="welcome_back">Добро пожаловать</string>
     <string name="join_us">Регистрируйтесь</string>
@@ -37,6 +38,7 @@
     <string name="assignments">Задания</string>
     <string name="actions">Действия</string>
     <string name="update_data">Обновить данные</string>
+    <string name="add_assignment">Добавить задание</string>
     <string name="update">Обновить</string>
     <string name="exit">Выйти</string>
     <string name="auto_update_notification">Профиль автоматически обновлен</string>
@@ -49,4 +51,6 @@
     <string name="assignment_parsing_error">Ошибка при разборе заданий</string>
     <string name="Yes">Да</string>
     <string name="No">Нет</string>
+    <string name="nav_profile">Профиль</string>
+    <string name="nav_settings">Настройки</string>
 </resources>

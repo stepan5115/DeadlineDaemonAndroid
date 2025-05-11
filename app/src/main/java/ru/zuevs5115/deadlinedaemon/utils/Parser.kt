@@ -40,7 +40,7 @@ object Parser {
                         (0 until array.length()).mapTo(mutableSetOf()) { array.getString(it) }
                     },
                     deadline = assignmentJson.getString("deadline"),
-                    subjectId = assignmentJson.getLong("subject_id"),
+                    subject = assignmentJson.getString("subject"),
                     lastNotificationTime = 0
                 ))
             }
