@@ -42,7 +42,10 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
             adapter = this@AssignmentsActivity.adapter
         }
         //update information before setUp UI
-        ProfileUpdater.updateProfileData(this, listOf(this::updateRecyclerView))
+        if (SharedPrefs(this).getInfo() == null)
+            ProfileUpdater.updateProfileData(this, listOf(this::updateRecyclerView))
+        else
+            updateRecyclerView()
         //set toolbar and save drawerLayout to close/open menu if we need
         setSupportActionBar(binding.toolbar)
         drawerLayout = binding.drawerLayout
@@ -76,7 +79,7 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
             }
             //add activities
             R.id.action_add -> {
-                Toast.makeText(this, "ADD", Toast.LENGTH_SHORT).show()
+                showCompletedAssignmentsDialog()
                 true
             }
             //else make what you want
@@ -193,6 +196,44 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
     //success response -> update information -> update RecyclerView
     private fun tmp() {
         ProfileUpdater.updateProfileData(this, listOf(this::updateRecyclerView))
+    }
+    //create and show dialog to make assignment incomplete
+    private fun showCompletedAssignmentsDialog() {
+        //get complete assignments
+        val completedAssignments = Parser.getCompletedAssignments(SharedPrefs(this).getInfo()!!).toList()
+        //if have not complete assignments
+        if (completedAssignments.isEmpty()) {
+            //make toast about it
+            Toast.makeText(this, getString(R.string.have_no_completed_assignments), Toast.LENGTH_SHORT).show()
+            return
+        }
+        val items = completedAssignments.map { it }.toTypedArray()
+        val checkedItems = BooleanArray(items.size) { false }
+
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.choose_assignments))
+            .setMultiChoiceItems(items, checkedItems) { _, which, isChecked ->
+                checkedItems[which] = isChecked
+            }
+            .setPositiveButton(getString(R.string.apply)) { _, _ ->
+                val selectedItems = mutableListOf<String>()
+                checkedItems.forEachIndexed { index, isChecked ->
+                    if (isChecked) {
+                        selectedItems.add(completedAssignments[index])
+                    }
+                }
+                processSelectedAssignments(selectedItems)
+            }
+            .setNegativeButton(getString(R.string.cancel), null)
+            .show()
+    }
+
+    private fun processSelectedAssignments(assignments: List<String>) {
+        // Здесь обрабатываем выбранные задания
+        assignments.forEach { assignment ->
+            Toast.makeText(this, "Обработка: ${assignment}", Toast.LENGTH_SHORT).show()
+            // Дополнительная логика обработки
+        }
     }
     //show progress bar
     override fun showLoadingOverlay() {

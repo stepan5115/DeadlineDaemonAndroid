@@ -44,7 +44,10 @@ class ProfileInfoActivity : AppCompatActivity(), LoadingOverlayHandler {
         //setup menu
         setupNavigation()
         //to avoid making a new request to the server every time you turn the screen
-        loadProfileData()
+        if (SharedPrefs(this).getInfo() == null)
+            ProfileUpdater.updateProfileData(this, listOf(this::loadProfileData))
+        else
+            loadProfileData()
     }
     //setup navigation menu
     private fun setupNavigation() {

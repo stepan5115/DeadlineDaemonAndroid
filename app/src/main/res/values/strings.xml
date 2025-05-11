@@ -60,4 +60,8 @@
     <string name="success_update">Успешно обновлена информация</string>
     <string name="mark_as_completed">Отметить как выполненное</string>
     <string name="sure_mark_as_completed">Вы уверены, что хотите отметить задание "%1$s" как выполненное?</string>
+    <string name="have_no_completed_assignments">Нет выполненных заданий</string>
+    <string name="choose_assignments">Выберите задания</string>
+    <string name="apply">Применить</string>
+    <string name="cancel">Отмена</string>
 </resources>

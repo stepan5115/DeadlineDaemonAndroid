@@ -63,4 +63,14 @@ object Parser {
         }
         oldResult.filter { hashTmpNew.containsKey(it.id) }
     }
+    //get completed assignments
+    fun getCompletedAssignments(jsonString: String): Set<String> {
+        val json = JSONObject(jsonString)
+        val completedAssignments : MutableSet<String> = mutableSetOf()
+        with(json.getJSONArray("groups")) {
+            for (i in 0 until length())
+                completedAssignments.add(getString(i))
+        }
+        return completedAssignments
+    }
 }
