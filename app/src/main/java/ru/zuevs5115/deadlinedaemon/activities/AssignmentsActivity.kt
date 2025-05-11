@@ -1,5 +1,6 @@
 package ru.zuevs5115.deadlinedaemon.activities
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -15,6 +16,7 @@ import ru.zuevs5115.deadlinedaemon.adapters.AssignmentAdapter
 import ru.zuevs5115.deadlinedaemon.databinding.ActivityAssignmentsBinding
 import ru.zuevs5115.deadlinedaemon.entities.Assignment
 import ru.zuevs5115.deadlinedaemon.utils.Parser
+import ru.zuevs5115.deadlinedaemon.utils.ProfileEditor
 import ru.zuevs5115.deadlinedaemon.utils.ProfileUpdater
 import ru.zuevs5115.deadlinedaemon.utils.SharedPrefs
 
@@ -31,6 +33,14 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
         super.onCreate(savedInstanceState)
         binding = ActivityAssignmentsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        //set content of RecyclerView (add processor for items)
+        adapter = AssignmentAdapter(emptyList()) { assignment ->
+            showMarkAsCompleteDialog(assignment)
+        }
+        binding.rvAssignments.apply {
+            layoutManager = LinearLayoutManager(this@AssignmentsActivity)
+            adapter = this@AssignmentsActivity.adapter
+        }
         //update information before setUp UI
         ProfileUpdater.updateProfileData(this, listOf(this::updateRecyclerView))
         //set toolbar and save drawerLayout to close/open menu if we need
@@ -151,16 +161,38 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
                 getString(R.string.empty_assignments),
                 Toast.LENGTH_SHORT
             ).show()
-            //finish activity
-            startActivity(Intent(this, ProfileInfoActivity::class.java))
-            finish()
         }
-        //set content of RecyclerView
-        adapter = AssignmentAdapter(assignments.toList())
-        binding.rvAssignments.apply {
-            layoutManager = LinearLayoutManager(this@AssignmentsActivity)
-            adapter = this@AssignmentsActivity.adapter
-        }
+        //set content of RecyclerView (add processor for items)
+        adapter.updateData(assignments.toList())
+    }
+    //function for process items
+    private fun showMarkAsCompleteDialog(assignment: Assignment) {
+        //make alert dialog
+        AlertDialog.Builder(this)
+            //setTitle
+            .setTitle(getString(R.string.mark_as_completed))
+            //setMessage
+            .setMessage(getString(R.string.sure_mark_as_completed, assignment.title))
+            //set name of positive button
+            .setPositiveButton(getString(R.string.Yes)) { _, _ ->
+                //mark assignment as completed and synchronized with server
+                markAssignmentAsComplete(assignment)
+            }
+            //set name of negative button
+            .setNegativeButton(getString(R.string.No), null)
+            //create dialog
+            .create()
+            //show dialog
+            .show()
+    }
+    //process mark assignment as completed
+    private fun markAssignmentAsComplete(assignment: Assignment) {
+        ProfileEditor.completeAssignment(assignment.id.toString(), this, listOf(this::tmp))
+    }
+    //function to update information if success complete assignment
+    //success response -> update information -> update RecyclerView
+    private fun tmp() {
+        ProfileUpdater.updateProfileData(this, listOf(this::updateRecyclerView))
     }
     //show progress bar
     override fun showLoadingOverlay() {

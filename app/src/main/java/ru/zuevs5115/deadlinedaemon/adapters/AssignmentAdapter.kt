@@ -10,7 +10,8 @@ import ru.zuevs5115.deadlinedaemon.entities.Assignment
 import ru.zuevs5115.deadlinedaemon.utils.AssignmentDiffCallback
 
 //adapter for display set of assignments
-class AssignmentAdapter(private var assignments: List<Assignment>) :
+class AssignmentAdapter(private var assignments: List<Assignment>,
+                        private val onItemLongClick: (Assignment) -> Unit) :
     RecyclerView.Adapter<AssignmentAdapter.AssignmentViewHolder>() {
     //stores links to markup elements of a single list item
     inner class AssignmentViewHolder(val binding: ItemAssignmentBinding) :
@@ -44,10 +45,6 @@ class AssignmentAdapter(private var assignments: List<Assignment>) :
         assignments = newAssignments
         //update UI (optimal)
         diffResult.dispatchUpdatesTo(this)
-    }
-    //process item with long click
-    private fun onItemLongClick(assignment: Assignment) {
-
     }
     //count of items
     override fun getItemCount(): Int = assignments.size

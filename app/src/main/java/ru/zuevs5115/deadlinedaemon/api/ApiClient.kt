@@ -23,4 +23,6 @@ object ApiClient {
         get() = retrofit.create(SignUpService::class.java)
     val getInfoService: GetInfoService
         get() = retrofit.create(GetInfoService::class.java)
+    val completeAssignmentService: CompleteAssignmentService
+        get() = retrofit.create(CompleteAssignmentService::class.java)
 }

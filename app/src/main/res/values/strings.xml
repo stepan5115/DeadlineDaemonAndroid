@@ -58,4 +58,6 @@
     <string name="nav_settings">Настройки</string>
     <string name="empty_assignments">Нету заданий</string>
     <string name="success_update">Успешно обновлена информация</string>
+    <string name="mark_as_completed">Отметить как выполненное</string>
+    <string name="sure_mark_as_completed">Вы уверены, что хотите отметить задание "%1$s" как выполненное?</string>
 </resources>
