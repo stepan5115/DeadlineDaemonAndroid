@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import retrofit2.Response
 import ru.zuevs5115.deadlinedaemon.api.ErrorResponse
 
+//take message from error response
 object ErrorHandler {
     //Error process
     fun handleError(response: Response<*>): String {

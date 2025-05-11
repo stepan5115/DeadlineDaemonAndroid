@@ -1,5 +1,6 @@
-package ru.zuevs5115.deadlinedaemon.enities
+package ru.zuevs5115.deadlinedaemon.entities
 
+//Entity User for simple work with profile information
 data class User(
     var id: Long,
     var username: String,

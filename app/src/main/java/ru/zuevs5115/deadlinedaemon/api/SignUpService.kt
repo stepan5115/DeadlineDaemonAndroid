@@ -5,6 +5,7 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
+//Service for signup request
 interface SignUpService {
     @FormUrlEncoded
     @POST("signup")

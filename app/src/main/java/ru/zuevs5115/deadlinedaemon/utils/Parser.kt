@@ -2,10 +2,12 @@ package ru.zuevs5115.deadlinedaemon.utils
 
 import org.json.JSONArray
 import org.json.JSONObject
-import ru.zuevs5115.deadlinedaemon.enities.Assignment
-import ru.zuevs5115.deadlinedaemon.enities.User
+import ru.zuevs5115.deadlinedaemon.entities.Assignment
+import ru.zuevs5115.deadlinedaemon.entities.User
 
+//parse information (for last response parsing)
 object Parser {
+    //make user from json
     fun fromJsonToUser(jsonString: String) : User {
         val json = JSONObject(jsonString)
         val id : Int = json.getInt("user_id")
@@ -25,6 +27,7 @@ object Parser {
         return User(id.toLong(), username, groups, canEditTasks, allowNotifications,
             notificationIntervalSeconds.toLong(), completedAssignments, notificationExcludedSubjects)
     }
+    //make assignments list from json
     fun fromJsonToAssignments(jsonString: String) : Set<Assignment> {
         val json = JSONObject(jsonString)
         val result : MutableSet<Assignment> = HashSet()
@@ -47,6 +50,7 @@ object Parser {
         }
         return result;
     }
+    //sync assignments (remove disappeared, add new)
     fun synchronizeAssignments(oldResult: MutableSet<Assignment>, newResult: Set<Assignment>) {
         val hashTmpNew : MutableMap<Long, Assignment> = HashMap()
         val hashTmpOld : MutableMap<Long, Assignment> = HashMap()

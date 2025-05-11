@@ -1,5 +1,6 @@
-package ru.zuevs5115.deadlinedaemon.enities
+package ru.zuevs5115.deadlinedaemon.entities
 
+//Entity Assignment for simple work with assignment information
 data class Assignment(
     var id: Long,
     var title: String,

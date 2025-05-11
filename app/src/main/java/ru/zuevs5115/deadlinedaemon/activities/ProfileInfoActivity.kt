@@ -2,8 +2,6 @@ package ru.zuevs5115.deadlinedaemon.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -13,56 +11,44 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import ru.zuevs5115.deadlinedaemon.R
-import ru.zuevs5115.deadlinedaemon.api.ApiClient
 import ru.zuevs5115.deadlinedaemon.databinding.ActivityProfileBinding
 import ru.zuevs5115.deadlinedaemon.utils.SharedPrefs
-import ru.zuevs5115.deadlinedaemon.enities.Assignment
-import ru.zuevs5115.deadlinedaemon.enities.User
+import ru.zuevs5115.deadlinedaemon.entities.User
 import ru.zuevs5115.deadlinedaemon.utils.Parser
 import ru.zuevs5115.deadlinedaemon.utils.ProfileUpdater
 import ru.zuevs5115.deadlinedaemon.utils.TimeFormatter
-import java.text.SimpleDateFormat
-import java.util.Locale
-import kotlin.time.Duration
 
 class ProfileInfoActivity : AppCompatActivity(), LoadingOverlayHandler {
     //binding for edit all elements
     private lateinit var binding: ActivityProfileBinding
-    //service for requesting/responding
-    private val infoService = ApiClient.getInfoService
+    //remember to open/close menu
     private lateinit var drawerLayout: DrawerLayout
-    //auto-updating interval ~ 5 minutes in milliseconds
-    private val updateInterval = 5 * 60 * 1000L
-    //for auto-updating
-    private lateinit var updateHandler: Handler
-    private lateinit var updateRunnable: Runnable
-    //store assignments and interval for another activities
-    private val assignments: MutableSet<Assignment> = mutableSetOf()
-    private var interval : Duration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        //base initialization
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //set toolbar and save drawerLayout to close/open if we need
+        //set toolbar and save drawerLayout to close/open menu if we need
         setSupportActionBar(binding.toolbar)
         drawerLayout = binding.drawerLayout
 
+        //init burger menu
         supportActionBar?.apply {
             //add "button" to actionBar
             setDisplayHomeAsUpEnabled(true)
             //set image (burger)
             setHomeAsUpIndicator(R.drawable.ic_menu)
         }
+        //setup menu
         setupNavigation()
         //to avoid making a new request to the server every time you turn the screen
         try {
             loadProfileData()
         }
         catch (e: Throwable) {
-            ProfileUpdater.updateProfileData(this)
-            loadProfileData()
+            ProfileUpdater.updateProfileData(this, listOf(this::loadProfileData))
         }
     }
     //setup navigation menu
@@ -71,20 +57,22 @@ class ProfileInfoActivity : AppCompatActivity(), LoadingOverlayHandler {
         binding.navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_profile -> {
-
+                    //already open
                 }
                 R.id.nav_tasks -> {
+                    //start activity assignments and finish itself
                     startActivity(Intent(this, AssignmentsActivity::class.java))
                     finish()
                 }
                 R.id.nav_settings -> {
-                    // startActivity(Intent(this, SettingsActivity::class.java))
+                    //will be SUPER COOL CODE
                 }
                 R.id.nav_refresh -> {
-                    ProfileUpdater.updateProfileData(this)
-                    loadProfileData()
+                    //update information (make request)
+                    ProfileUpdater.updateProfileData(this, listOf(this::loadProfileData))
                 }
                 R.id.nav_logout -> {
+                    //logout
                     logout()
                 }
             }
@@ -93,7 +81,7 @@ class ProfileInfoActivity : AppCompatActivity(), LoadingOverlayHandler {
             true
         }
     }
-
+    //setup actions for each button in toolbar
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         //set toolbar actions
         return when (item.itemId) {
@@ -104,32 +92,35 @@ class ProfileInfoActivity : AppCompatActivity(), LoadingOverlayHandler {
             }
             R.id.action_refresh -> {
                 //refresh data
-                ProfileUpdater.updateProfileData(this)
-                loadProfileData()
+                ProfileUpdater.updateProfileData(this, listOf(this::loadProfileData))
                 true
             }
             //make what you wand
             else -> super.onOptionsItemSelected(item)
         }
     }
-
+    //load menu xml
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         //make menu from xml
         menuInflater.inflate(R.menu.profile_menu, menu)
         return true
     }
-
+    //fill UI information about profile
     private fun loadProfileData() {
         try {
+            //if not information
             if (SharedPrefs(this).getInfo() == null) {
+                //toast about fail fill UI
                 Toast.makeText(
                     this@ProfileInfoActivity,
                     getString(R.string.failed_load),
                     Toast.LENGTH_SHORT
                 ).show()
-                ProfileUpdater.updateProfileData(this)
+                //try update sharedPrefs for next iterations
+                ProfileUpdater.updateProfileData(this, listOf())
                 return
             }
+            //try parse user information
             val user: User = Parser.fromJsonToUser(SharedPrefs(this).getInfo()!!)
             //base information
             binding.tvUserId.text = user.id.toString()
@@ -147,13 +138,13 @@ class ProfileInfoActivity : AppCompatActivity(), LoadingOverlayHandler {
             binding.tvExcludedSubjects.text = user.notificationExcludedSubjects
             //complete assignments
             binding.tvCompletedAssignments.text = user.completedAssignments
-            //update username
+            //update menu username
             binding.navView.getHeaderView(0).findViewById<TextView>(R.id.tvMenuUsername).text =
                 user.username
+            //update last update
             binding.tvLastUpdate.text = SharedPrefs(this).getLastUpdate().takeIf { it != 0L }
                 ?.let { TimeFormatter.formatTimestamp(it) }
                 ?: getString(R.string.not_update)
-
         } catch (e: Exception) {
             //make toast about parse error
             Toast.makeText(this@ProfileInfoActivity, getString(R.string.failed_load), Toast.LENGTH_SHORT).show()
@@ -161,42 +152,35 @@ class ProfileInfoActivity : AppCompatActivity(), LoadingOverlayHandler {
             startActivity(Intent(this, LoginActivity::class.java))
         }
     }
-
+    //logout
     private fun logout() {
         //clear login information
-        SharedPrefs(this).clearCredentials()
-        //go to login
+        SharedPrefs(this).clearInformation()
+        //go to login and clear information
         startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }
-
+    //if back button pressed
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         //if toolbar "button" pressed then open/close menu
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
         } else {
+            //else go to login and clear information
             startActivity(Intent(this, LoginActivity::class.java))
-            SharedPrefs(this).clearCredentials()
+            SharedPrefs(this).clearInformation()
             finish()
         }
     }
+    //show progress bar
     override fun showLoadingOverlay() {
         //show process bar
         binding.loadingOverlay.visibility = View.VISIBLE
     }
-
+    //hide progress bar
     override fun hideLoadingOverlay() {
         //hide process bar
         binding.loadingOverlay.visibility = View.GONE
-    }
-    override fun onResume() {
-        super.onResume()
-        ProfileUpdater.start(this.applicationContext, mutableListOf(this::loadProfileData))
-    }
-
-    override fun onPause() {
-        super.onPause()
-        ProfileUpdater.stop()
     }
 }

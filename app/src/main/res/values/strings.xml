@@ -25,6 +25,7 @@
     <string name="id_field">ID:</string>
     <string name="name_field">Имя:</string>
     <string name="groups_field">Группы:</string>
+    <string name="groups_field_ph">Группы: %1$s</string>
     <string name="settings">Настройки</string>
     <string name="edit_field">Редактирование задач:</string>
     <string name="notification_field">Уведомления:</string>
@@ -46,7 +47,9 @@
     <string name="title_filed">Название:</string>
     <string name="description_field">Описание:</string>
     <string name="deadline_field">Дедлайн:</string>
-    <string name="subjectId_field">Предмет ID:</string>
+    <string name="deadline_field_ph">Дедлайн: %1$s</string>
+    <string name="subject_field">Предмет:</string>
+    <string name="subject_field_ph">Предмет: %1$s</string>
     <string name="no_current_assignments">Нет текущих заданий</string>
     <string name="assignment_parsing_error">Ошибка при разборе заданий</string>
     <string name="Yes">Да</string>

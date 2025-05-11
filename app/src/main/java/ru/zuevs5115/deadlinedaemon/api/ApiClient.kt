@@ -3,6 +3,7 @@ package ru.zuevs5115.deadlinedaemon.api
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+//Class to request/response to server
 object ApiClient {
     //url for request/response
     private const val BASE_URL = "http://192.168.50.69:8080/api/"

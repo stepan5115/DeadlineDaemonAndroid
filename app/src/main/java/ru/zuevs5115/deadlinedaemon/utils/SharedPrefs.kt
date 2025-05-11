@@ -2,9 +2,11 @@ package ru.zuevs5115.deadlinedaemon.utils
 
 import android.content.Context
 
+//shared preferences
 class SharedPrefs(context: Context) {
+    //prefs
     private val prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
-
+    //save login information
     fun saveCredentials(username: String, password: String) {
         prefs.edit().apply {
             putString("username", username)
@@ -12,40 +14,42 @@ class SharedPrefs(context: Context) {
             apply()
         }
     }
-
+    //save response from server
     fun saveInfo(jsonInfo: String) {
         prefs.edit().apply {
             putString("info", jsonInfo)
             apply()
         }
     }
-
+    //get last response of server
     fun getInfo() : String? {
         return prefs.getString("info", null)
     }
-
+    //save last response time
     fun saveLastUpdate(lastUpdate: Long) {
         prefs.edit().apply {
             putLong("lastUpdate", lastUpdate)
             apply()
         }
     }
-
+    //get last response time
     fun getLastUpdate() : Long {
         return prefs.getLong("lastUpdate", 0)
     }
-
+    //get login information
     fun getCredentials(): Pair<String?, String?> {
         return Pair(
             prefs.getString("username", null),
             prefs.getString("password", null)
         )
     }
-
-    fun clearCredentials() {
+    //clear allInformation (if you exit)
+    fun clearInformation() {
         with(prefs.edit()) {
             remove("username")
             remove("password")
+            remove("info")
+            remove("lastUpdate")
             apply()
         }
     }
