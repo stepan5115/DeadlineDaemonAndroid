@@ -44,12 +44,7 @@ class ProfileInfoActivity : AppCompatActivity(), LoadingOverlayHandler {
         //setup menu
         setupNavigation()
         //to avoid making a new request to the server every time you turn the screen
-        try {
-            loadProfileData()
-        }
-        catch (e: Throwable) {
-            ProfileUpdater.updateProfileData(this, listOf(this::loadProfileData))
-        }
+        loadProfileData()
     }
     //setup navigation menu
     private fun setupNavigation() {

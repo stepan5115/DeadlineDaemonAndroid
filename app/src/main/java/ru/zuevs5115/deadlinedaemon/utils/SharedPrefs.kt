@@ -4,8 +4,14 @@ import android.content.Context
 
 //shared preferences
 class SharedPrefs(context: Context) {
+    //like static val (maximum antiquity of data)
+    companion object {
+        private const val UPDATE_INTERVAL = 5 * 60 * 1000L
+    }
     //prefs
     private val prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
+    //remember context to make request
+    private val context = context.applicationContext
     //save login information
     fun saveCredentials(username: String, password: String) {
         prefs.edit().apply {
@@ -23,6 +29,20 @@ class SharedPrefs(context: Context) {
     }
     //get last response of server
     fun getInfo() : String? {
+        val lastUpdate = prefs.getLong("lastUpdate", 0)
+        val currentTime = System.currentTimeMillis()
+        //if data too old then update
+        if (currentTime - lastUpdate > UPDATE_INTERVAL) {
+            ProfileUpdater.updateProfileData(context, listOf())
+            //update lastUpdate time
+            prefs.edit().apply {
+                putLong("lastUpdate", currentTime)
+                apply()
+            }
+            //return information
+            return prefs.getString("info", null)
+        }
+        //return information
         return prefs.getString("info", null)
     }
     //save last response time

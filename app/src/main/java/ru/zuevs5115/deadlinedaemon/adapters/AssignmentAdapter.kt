@@ -22,12 +22,18 @@ class AssignmentAdapter(private var assignments: List<Assignment>) :
     }
     //fill data in new ViewHolder
     override fun onBindViewHolder(holder: AssignmentViewHolder, position: Int) {
+        //fill data
         val assignment = assignments[position]
         val context = holder.binding.root.context
         holder.binding.tvTitle.text = assignment.title
         holder.binding.tvDeadline.text = context.getString(R.string.deadline_field_ph, assignment.deadline)
         holder.binding.tvGroups.text = context.getString(R.string.groups_field_ph, assignment.groups.joinToString())
         holder.binding.tvSubject.text = context.getString(R.string.subject_field_ph, assignment.subject)
+        //Add process long click
+        holder.itemView.setOnLongClickListener {
+            onItemLongClick(assignment)
+            true
+        }
     }
     //update data information
     fun updateData(newAssignments: List<Assignment>) {
@@ -38,6 +44,10 @@ class AssignmentAdapter(private var assignments: List<Assignment>) :
         assignments = newAssignments
         //update UI (optimal)
         diffResult.dispatchUpdatesTo(this)
+    }
+    //process item with long click
+    private fun onItemLongClick(assignment: Assignment) {
+
     }
     //count of items
     override fun getItemCount(): Int = assignments.size

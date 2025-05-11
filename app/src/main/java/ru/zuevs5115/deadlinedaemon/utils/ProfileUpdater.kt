@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ru.zuevs5115.deadlinedaemon.R
 import ru.zuevs5115.deadlinedaemon.activities.LoadingOverlayHandler
 import ru.zuevs5115.deadlinedaemon.activities.LoginActivity
 import ru.zuevs5115.deadlinedaemon.api.ApiClient
@@ -35,6 +36,8 @@ object ProfileUpdater {
                             val responseText = response.body()?.message ?: ""
                             SharedPrefs(context).saveInfo(responseText)
                             SharedPrefs(context).saveLastUpdate(lastUpdate)
+                            //toast about success
+                            Toast.makeText(context, context.getString(R.string.success_update), Toast.LENGTH_SHORT).show()
                             //do what user want
                             listeners.forEach { it() }
                         } else {
@@ -50,7 +53,7 @@ object ProfileUpdater {
                         //hide loading if allow
                         if (activity is LoadingOverlayHandler) activity.hideLoadingOverlay()
                         //make toast about error
-                        Toast.makeText(context, "Network error occurred", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.network_error), Toast.LENGTH_SHORT).show()
                     }
                 }
             }

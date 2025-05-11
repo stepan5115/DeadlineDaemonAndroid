@@ -31,8 +31,8 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
         super.onCreate(savedInstanceState)
         binding = ActivityAssignmentsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //update RecyclerView
-        updateRecyclerView()
+        //update information before setUp UI
+        ProfileUpdater.updateProfileData(this, listOf(this::updateRecyclerView))
         //set toolbar and save drawerLayout to close/open menu if we need
         setSupportActionBar(binding.toolbar)
         drawerLayout = binding.drawerLayout
@@ -122,7 +122,6 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
         } else {
             //else go to login and clear information
             startActivity(Intent(this, ProfileInfoActivity::class.java))
-            SharedPrefs(this).clearInformation()
             finish()
         }
     }
@@ -138,11 +137,24 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
                 getString(R.string.failed_load_assignments),
                 Toast.LENGTH_SHORT
             ).show()
-            //finish activity
+            //set activities
+            startActivity(Intent(this, ProfileInfoActivity::class.java))
             finish()
         }
         //getAssignments
         val assignments: Set<Assignment> = Parser.fromJsonToAssignments(json!!)
+        //if doesn't have assignments
+        if (assignments.isEmpty()) {
+            //make toast about empty
+            Toast.makeText(
+                this,
+                getString(R.string.empty_assignments),
+                Toast.LENGTH_SHORT
+            ).show()
+            //finish activity
+            startActivity(Intent(this, ProfileInfoActivity::class.java))
+            finish()
+        }
         //set content of RecyclerView
         adapter = AssignmentAdapter(assignments.toList())
         binding.rvAssignments.apply {
