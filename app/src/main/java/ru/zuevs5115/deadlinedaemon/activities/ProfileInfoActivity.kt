@@ -26,6 +26,8 @@ import ru.zuevs5115.deadlinedaemon.utils.ErrorHandler
 import ru.zuevs5115.deadlinedaemon.utils.SharedPrefs
 import org.json.JSONObject
 import ru.zuevs5115.deadlinedaemon.enities.Assignment
+import ru.zuevs5115.deadlinedaemon.enities.User
+import ru.zuevs5115.deadlinedaemon.utils.Parser
 import ru.zuevs5115.deadlinedaemon.utils.TimeFormatter
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -81,9 +83,11 @@ class ProfileInfoActivity : AppCompatActivity() {
             }
             catch (e: Throwable) {
                 updateProfileData()
+                loadProfileData()
             }
         } else {
             updateProfileData()
+            loadProfileData()
         }
     }
     //setup navigation menu
@@ -102,6 +106,7 @@ class ProfileInfoActivity : AppCompatActivity() {
                 }
                 R.id.nav_refresh -> {
                     updateProfileData()
+                    loadProfileData()
                 }
                 R.id.nav_logout -> {
                     logout()
@@ -124,6 +129,7 @@ class ProfileInfoActivity : AppCompatActivity() {
             R.id.action_refresh -> {
                 //refresh data
                 updateProfileData()
+                loadProfileData()
                 true
             }
             //make what you wand
@@ -137,39 +143,37 @@ class ProfileInfoActivity : AppCompatActivity() {
         return true
     }
 
-    private fun loadProfileData(jsonString: String) {
+    private fun loadProfileData() {
         try {
-            //parse json response
-            val json = JSONObject(jsonString)
-
-            //base information
-            binding.tvUserId.text = json.getInt("user_id").toString()
-            binding.tvUsername.text = json.getString("username")
-            binding.tvGroups.text = json.getJSONArray("groups").let { array ->
-                (0 until array.length()).joinToString { array.getString(it) }
+            if (SharedPrefs(this).getInfo() == null) {
+                Toast.makeText(
+                    this@ProfileInfoActivity,
+                    getString(R.string.failed_load),
+                    Toast.LENGTH_SHORT
+                ).show()
+                updateProfileData()
+                return
             }
+            val user: User = Parser.fromJsonToUser(SharedPrefs(this).getInfo()!!)
+            //base information
+            binding.tvUserId.text = user.id.toString()
+            binding.tvUsername.text = user.username
+            binding.tvGroups.text = user.groups
             //settings
-            binding.tvCanEditTasks.text = if (json.getBoolean("canEditTasks")) "Да" else "Нет"
-            binding.tvAllowNotifications.text = if (json.getBoolean("allowNotifications")) getString(R.string.on_notifications)
+            binding.tvCanEditTasks.text = if (user.canEditTasks) getString(R.string.Yes) else
+                getString(R.string.No)
+            binding.tvAllowNotifications.text = if (user.allowNotifications) getString(R.string.on_notifications)
                 else getString(R.string.off_notifications)
             //convert time in readable format
-            val seconds = if (json.has("notificationIntervalSeconds")) json.getInt("notificationIntervalSeconds") else null
-            binding.tvNotificationInterval.text = TimeFormatter.formatNotificationInterval(seconds, this)
+            val seconds = user.notificationIntervalSeconds
+            binding.tvNotificationInterval.text = TimeFormatter.formatNotificationInterval(seconds)
             //excluded subjects
-            binding.tvExcludedSubjects.text = json.getJSONArray("notificationExcludedSubjects").let { array ->
-                (0 until array.length()).joinToString { array.getString(it) }
-            }
+            binding.tvExcludedSubjects.text = user.notificationExcludedSubjects
             //complete assignments
-            binding.tvCompletedAssignments.text = json.getJSONArray("completedAssignments").let { array ->
-                (0 until array.length()).joinToString { array.getString(it) }
-            }
-            //all assignments
-            if (json.has("assignments")) {
-                binding.tvAllAssignments.text = parseAssignments(json.getJSONArray("assignments"))
-            }
+            binding.tvCompletedAssignments.text = user.completedAssignments
             //update username
             binding.navView.getHeaderView(0).findViewById<TextView>(R.id.tvMenuUsername).text =
-                json.getString("username")
+                user.username
         } catch (e: Exception) {
             //make toast about parse error
             Toast.makeText(this@ProfileInfoActivity, getString(R.string.failed_load), Toast.LENGTH_SHORT).show()
@@ -199,7 +203,7 @@ class ProfileInfoActivity : AppCompatActivity() {
                             binding.tvLastUpdate.text = getString(R.string.last_update, formattedTime)
                             //parse response
                             val responseText = response.body()?.message ?: ""
-                            loadProfileData(responseText)
+                            SharedPrefs(this@ProfileInfoActivity).saveInfo(responseText)
                         } else {
                             val errorMessage = ErrorHandler.handleError(response)
                             //toast about error
@@ -286,6 +290,7 @@ class ProfileInfoActivity : AppCompatActivity() {
             override fun run() {
                 if (shouldUpdate()) {
                     updateProfileData()
+                    loadProfileData()
                     Toast.makeText(
                         this@ProfileInfoActivity,
                         getString(R.string.auto_update_notification),

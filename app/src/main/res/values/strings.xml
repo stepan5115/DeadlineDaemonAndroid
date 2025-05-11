@@ -47,4 +47,6 @@
     <string name="subjectId_field">Предмет ID:</string>
     <string name="no_current_assignments">Нет текущих заданий</string>
     <string name="assignment_parsing_error">Ошибка при разборе заданий</string>
+    <string name="Yes">Да</string>
+    <string name="No">Нет</string>
 </resources>

@@ -9,8 +9,7 @@ import java.util.Locale
 
 
 object TimeFormatter {
-    fun formatNotificationInterval(seconds: Int?, context: Context): String {
-        if (seconds == null) return context.getString(R.string.not_specified)
+    fun formatNotificationInterval(seconds: Long): String {
 
         val duration = Duration.ofSeconds(seconds.toLong())
         val days = duration.toDays()

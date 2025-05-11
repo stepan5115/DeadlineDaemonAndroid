@@ -13,6 +13,17 @@ class SharedPrefs(context: Context) {
         }
     }
 
+    fun saveInfo(jsonInfo: String) {
+        prefs.edit().apply {
+            putString("info", jsonInfo)
+            apply()
+        }
+    }
+
+    fun getInfo() : String? {
+        return prefs.getString("info", null)
+    }
+
     fun getCredentials(): Pair<String?, String?> {
         return Pair(
             prefs.getString("username", null),
