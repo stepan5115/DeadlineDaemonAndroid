@@ -299,6 +299,49 @@
                                 android:textColor="@color/colorOnSurface"/>
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
+                    <!-- Добавьте после карточки выполненных заданий -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        app:cardBackgroundColor="@color/colorSurface"
+                        app:strokeColor="@color/colorOutline"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/all_assignments"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="8dp"/>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/colorOutline"
+                                android:layout_marginBottom="8dp"/>
+
+                            <ScrollView
+                                android:layout_width="match_parent"
+                                android:layout_height="300dp"
+                                android:padding="4dp">
+
+                                <TextView
+                                    android:id="@+id/tvAllAssignments"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/colorOnSurface"/>
+                            </ScrollView>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
             </ScrollView>
 

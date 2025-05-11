@@ -39,4 +39,12 @@
     <string name="update_data">Обновить данные</string>
     <string name="update">Обновить</string>
     <string name="exit">Выйти</string>
+    <string name="auto_update_notification">Профиль автоматически обновлен</string>
+    <string name="all_assignments">Все задания</string>
+    <string name="title_filed">Название:</string>
+    <string name="description_field">Описание:</string>
+    <string name="deadline_field">Дедлайн:</string>
+    <string name="subjectId_field">Предмет ID:</string>
+    <string name="no_current_assignments">Нет текущих заданий</string>
+    <string name="assignment_parsing_error">Ошибка при разборе заданий</string>
 </resources>

@@ -2,6 +2,10 @@ package ru.zuevs5115.deadlinedaemon.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.provider.ContactsContract.Data
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -14,21 +18,33 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONArray
 import ru.zuevs5115.deadlinedaemon.R
 import ru.zuevs5115.deadlinedaemon.api.ApiClient
 import ru.zuevs5115.deadlinedaemon.databinding.ActivityProfileBinding
 import ru.zuevs5115.deadlinedaemon.utils.ErrorHandler
 import ru.zuevs5115.deadlinedaemon.utils.SharedPrefs
 import org.json.JSONObject
+import ru.zuevs5115.deadlinedaemon.enities.Assignment
 import ru.zuevs5115.deadlinedaemon.utils.TimeFormatter
+import java.text.SimpleDateFormat
+import java.util.Locale
+import kotlin.time.Duration
 
 class ProfileInfoActivity : AppCompatActivity() {
     //binding for edit all elements
     private lateinit var binding: ActivityProfileBinding
     //service for requesting/responding
     private val infoService = ApiClient.getInfoService
-    //
     private lateinit var drawerLayout: DrawerLayout
+    //auto-updating interval ~ 5 minutes in milliseconds
+    private val updateInterval = 5 * 60 * 1000L
+    //for auto-updating
+    private lateinit var updateHandler: Handler
+    private lateinit var updateRunnable: Runnable
+    //store assignments and interval for another activities
+    private val assignmentsMap = mutableMapOf<Long, Assignment>()
+    private var interval : Duration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +74,10 @@ class ProfileInfoActivity : AppCompatActivity() {
                 binding.tvExcludedSubjects.text = savedInstanceState.getString("excludedSubjects")
                 binding.tvCompletedAssignments.text = savedInstanceState.getString("completeAssignments")
                 binding.tvLastUpdate.text = savedInstanceState.getString("lastUpdate") ?: getString(R.string.not_update)
+                savedInstanceState.getStringArrayList("assignments_data")?.forEach { entry ->
+                    val (id, time) = entry.split("|")
+                    assignmentsMap[id.toLong()]?.lastNotificationTime = time.toLong()
+                }
             }
             catch (e: Throwable) {
                 updateProfileData()
@@ -142,6 +162,10 @@ class ProfileInfoActivity : AppCompatActivity() {
             //complete assignments
             binding.tvCompletedAssignments.text = json.getJSONArray("completedAssignments").let { array ->
                 (0 until array.length()).joinToString { array.getString(it) }
+            }
+            //all assignments
+            if (json.has("assignments")) {
+                binding.tvAllAssignments.text = parseAssignments(json.getJSONArray("assignments"))
             }
             //update username
             binding.navView.getHeaderView(0).findViewById<TextView>(R.id.tvMenuUsername).text =
@@ -236,5 +260,100 @@ class ProfileInfoActivity : AppCompatActivity() {
         outState.putString("excludedSubjects", binding.tvExcludedSubjects.text.toString())
         outState.putString("completeAssignments", binding.tvCompletedAssignments.text.toString())
         outState.putString("lastUpdate", binding.tvLastUpdate.text.toString())
+        val assignmentsList = assignmentsMap.values.map { assignment ->
+            "${assignment.id}|${assignment.lastNotificationTime}"
+        }
+        outState.putStringArrayList("assignments_data", ArrayList(assignmentsList))
+    }
+    //check last update interval
+    private fun shouldUpdate(): Boolean {
+        val lastUpdateText = binding.tvLastUpdate.text.toString()
+        return if (lastUpdateText.contains(getString(R.string.not_update))) {
+            true
+        } else {
+            try {
+                val format = SimpleDateFormat("dd MMM yyyy HH:mm:ss", Locale.getDefault())
+                val lastUpdateTime = format.parse(lastUpdateText.substringAfter(": "))?.time ?: 0
+                System.currentTimeMillis() - lastUpdateTime >= updateInterval
+            } catch (e: Exception) {
+                true
+            }
+        }
+    }
+    private fun startAutoUpdate() {
+        updateHandler = Handler(Looper.getMainLooper())
+        updateRunnable = object : Runnable {
+            override fun run() {
+                if (shouldUpdate()) {
+                    updateProfileData()
+                    Toast.makeText(
+                        this@ProfileInfoActivity,
+                        getString(R.string.auto_update_notification),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                //it is possible that when the user wakes up, he has updated the information on
+                // his own, then the next time it is triggered, more than 5 minutes may have
+                // passed since the last update, but this is not critical.
+                updateHandler.postDelayed(this, updateInterval)
+            }
+        }
+        updateHandler.post(updateRunnable)
+    }
+    private fun stopAutoUpdate() {
+        if (::updateHandler.isInitialized) {
+            updateHandler.removeCallbacks(updateRunnable)
+        }
+    }
+    override fun onResume() {
+        super.onResume()
+        startAutoUpdate()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopAutoUpdate()
+    }
+    private fun parseAssignments(assignmentsJson: JSONArray): String {
+        val newAssignments = mutableListOf<Assignment>()
+        val currentIds = mutableSetOf<Long>()
+        val result : StringBuilder = StringBuilder()
+
+        for (i in 0 until assignmentsJson.length()) {
+            try {
+                val assignmentJson = assignmentsJson.getJSONObject(i)
+                val id = assignmentJson.getLong("assignment_id")
+                currentIds.add(id)
+
+                val existingAssignment = assignmentsMap[id]
+                if (existingAssignment != null) {
+                    result.append("\uD83D\uDE80").append(getString(R.string.title_filed)).append(existingAssignment.title).append("\n").
+                            append("\uD83D\uDD25").append(getString(R.string.deadline_field)).append(existingAssignment.deadline).append("\n").
+                            append("\n")
+                } else {
+                    result.append("\uD83D\uDE80").append(getString(R.string.title_filed)).append(assignmentJson.getString("title")).append("\n").
+                            append("\uD83D\uDD25").append(getString(R.string.deadline_field)).append(assignmentJson.getString("description")).append("\n").
+                            append("\n")
+                    newAssignments.add(Assignment(
+                        id = id,
+                        title = assignmentJson.getString("title"),
+                        description = assignmentJson.getString("description"),
+                        groups = assignmentJson.getJSONArray("groups").let { array ->
+                            (0 until array.length()).mapTo(mutableSetOf()) { array.getString(it) }
+                        },
+                        deadline = assignmentJson.getString("deadline"),
+                        subjectId = assignmentJson.getLong("subject_id"),
+                        lastNotificationTime = 0
+                    ).also { assignmentsMap[id] = it })
+                }
+            } catch (e: Exception) {
+                Log.e("Assignment", "Error parsing assignment", e)
+            }
+        }
+
+        // Удаляем задания, которых больше нет
+        assignmentsMap.keys.removeAll { it !in currentIds }
+
+        return result.toString()
     }
 }
