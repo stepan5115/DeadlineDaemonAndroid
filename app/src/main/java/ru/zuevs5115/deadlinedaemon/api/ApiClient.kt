@@ -2,6 +2,7 @@ package ru.zuevs5115.deadlinedaemon.api
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 
 //Class to request/response to server
 object ApiClient {
@@ -33,4 +34,10 @@ object ApiClient {
         get() = retrofit.create(GetAdminRightsService::class.java)
     val setIntervalService: SetIntervalService
         get() = retrofit.create(SetIntervalService::class.java)
+    val getAllSubjectsService: GetAllSubjectsService
+        get() = retrofit.create(GetAllSubjectsService::class.java)
+    val excludeSubjectService: ExcludeSubjectService
+        get() = retrofit.create(ExcludeSubjectService::class.java)
+    val includeSubjectService: IncludeSubjectService
+        get() = retrofit.create(IncludeSubjectService::class.java)
 }

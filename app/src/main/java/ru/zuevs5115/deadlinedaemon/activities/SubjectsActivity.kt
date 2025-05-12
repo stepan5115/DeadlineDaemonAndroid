@@ -16,39 +16,39 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.zuevs5115.deadlinedaemon.R
-import ru.zuevs5115.deadlinedaemon.adapters.AssignmentAdapter
+import ru.zuevs5115.deadlinedaemon.adapters.SubjectAdapter
 import ru.zuevs5115.deadlinedaemon.api.ApiClient
-import ru.zuevs5115.deadlinedaemon.databinding.ActivityAssignmentsBinding
-import ru.zuevs5115.deadlinedaemon.entities.Assignment
+import ru.zuevs5115.deadlinedaemon.databinding.ActivitySubjectsBinding
+import ru.zuevs5115.deadlinedaemon.entities.Subject
 import ru.zuevs5115.deadlinedaemon.utils.Parser
 import ru.zuevs5115.deadlinedaemon.utils.ProfileEditor
 import ru.zuevs5115.deadlinedaemon.utils.ProfileUpdater
 import ru.zuevs5115.deadlinedaemon.utils.SharedPrefs
 
-class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
+class SubjectsActivity : AppCompatActivity(), LoadingOverlayHandler {
     //binding to setUp UI
-    private lateinit var binding: ActivityAssignmentsBinding
+    private lateinit var binding: ActivitySubjectsBinding
     //remember to open/close menu
     private lateinit var drawerLayout: DrawerLayout
     //save adapter to update content of RecyclerView
-    private lateinit var adapter: AssignmentAdapter
+    private lateinit var adapter: SubjectAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //base init
         super.onCreate(savedInstanceState)
-        binding = ActivityAssignmentsBinding.inflate(layoutInflater)
+        binding = ActivitySubjectsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         //set content of RecyclerView (add processor for items)
-        adapter = AssignmentAdapter(emptyList()) { assignment ->
-            showMarkAsCompleteDialog(assignment)
+        adapter = SubjectAdapter(emptyList()) { subject ->
+            showMarkAsExcludeDialog(subject)
         }
-        binding.rvAssignments.apply {
-            layoutManager = LinearLayoutManager(this@AssignmentsActivity)
-            adapter = this@AssignmentsActivity.adapter
+        binding.rvSubjects.apply {
+            layoutManager = LinearLayoutManager(this@SubjectsActivity)
+            adapter = this@SubjectsActivity.adapter
         }
         //update information before setUp UI
-        if (SharedPrefs(this).getInfo() == null)
-            ProfileUpdater.updateProfileData(this, listOf(this::updateRecyclerView))
+        if (SharedPrefs(this).getSubjects() == null)
+            ProfileUpdater.getAllSubjects(this, listOf(this::updateRecyclerView))
         else
             updateRecyclerView()
         //set toolbar and save drawerLayout to close/open menu if we need
@@ -79,17 +79,21 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
             }
             //update information and update RecyclerView
             R.id.action_refresh -> {
-                ProfileUpdater.updateProfileData(this, listOf(this::updateRecyclerView))
+                ProfileUpdater
+                ProfileUpdater.updateProfileData(this, listOf(this::tmpForUpdateAndGetSubjects))
                 true
             }
             //add activities
             R.id.action_add -> {
-                showCompletedAssignmentsDialog()
+                showIncludeSubjectDialog()
                 true
             }
             //else make what you want
             else -> super.onOptionsItemSelected(item)
         }
+    }
+    private fun tmpForUpdateAndGetSubjects() {
+        ProfileUpdater.getAllSubjects(this, listOf(this::updateRecyclerView))
     }
     //setup navigation menu
     private fun setupNavigation() {
@@ -103,17 +107,20 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
                     finish()
                 }
                 R.id.nav_tasks -> {
-                    //already here
+                    //go to tasks activity
+                    startActivity(Intent(this, AssignmentsActivity::class.java))
+                    //finish itself
+                    finish()
                 }
                 R.id.nav_settings -> {
-                    //go to settings activity
+                    //go to settings
                     startActivity(Intent(this, SettingsActivity::class.java))
                     //finish itself
                     finish()
                 }
                 R.id.nav_refresh -> {
                     //update information (request to server) and update RecyclerView
-                    ProfileUpdater.updateProfileData(this, listOf(this::updateRecyclerView))
+                    ProfileUpdater.updateProfileData(this, listOf(this::tmpForUpdateAndGetSubjects))
                 }
                 R.id.nav_logout -> {
                     //logout
@@ -149,13 +156,13 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
     //update RecyclerView
     private fun updateRecyclerView() {
         //get last response information
-        val json = SharedPrefs(this).getInfo()
+        val json = SharedPrefs(this).getSubjects()
         //if null
         if (json == null) {
             //make toast about error
             Toast.makeText(
                 this,
-                getString(R.string.failed_load_assignments),
+                getString(R.string.failed_load_subjects),
                 Toast.LENGTH_SHORT
             ).show()
             //set activities
@@ -163,31 +170,31 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
             finish()
         }
         //getAssignments
-        val assignments: Set<Assignment> = Parser.fromJsonToAssignments(json!!)
+        val subjects: Set<Subject> = Parser.fromJsonToSubjects(json!!)
         //if doesn't have assignments
-        if (assignments.isEmpty()) {
+        if (subjects.isEmpty()) {
             //make toast about empty
             Toast.makeText(
                 this,
-                getString(R.string.empty_assignments),
+                getString(R.string.empty_subjects),
                 Toast.LENGTH_SHORT
             ).show()
         }
         //set content of RecyclerView (add processor for items)
-        adapter.updateData(assignments.toList())
+        adapter.updateData(subjects.toList())
     }
     //function for process items
-    private fun showMarkAsCompleteDialog(assignment: Assignment) {
+    private fun showMarkAsExcludeDialog(subject: Subject) {
         //make alert dialog
         AlertDialog.Builder(this)
             //setTitle
             .setTitle(getString(R.string.mark_as_completed))
             //setMessage
-            .setMessage(getString(R.string.sure_mark_as_completed, assignment.title))
+            .setMessage(getString(R.string.sure_mark_as_completed, subject.name))
             //set name of positive button
             .setPositiveButton(getString(R.string.Yes)) { _, _ ->
                 //mark assignment as completed and synchronized with server
-                markAssignmentAsComplete(assignment)
+                markSubjectAsExcluded(subject)
             }
             //set name of negative button
             .setNegativeButton(getString(R.string.No), null)
@@ -197,8 +204,11 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
             .show()
     }
     //process mark assignment as completed
-    private fun markAssignmentAsComplete(assignment: Assignment) {
-        ProfileEditor.completeAssignment(assignment.id.toString(), this, listOf(this::tmp))
+    private fun markSubjectAsExcluded(subject: Subject) {
+        ProfileEditor.excludeSubject(subject.id.toString(), this, listOf(this::tmpForExclude))
+    }
+    private fun tmpForExclude() {
+        ProfileUpdater.updateProfileData(this, listOf(this::tmpForUpdateAndGetSubjects))
     }
     //function to update information if success complete assignment
     //success response -> update information -> update RecyclerView
@@ -206,50 +216,49 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
         ProfileUpdater.updateProfileData(this, listOf(this::updateRecyclerView))
     }
     //create and show dialog to make assignment incomplete
-    private fun showCompletedAssignmentsDialog() {
+    private fun showIncludeSubjectDialog() {
         //get complete assignments
-        val completedAssignments = Parser.getCompletedAssignments(SharedPrefs(this).getInfo()!!).toList()
+        val excludedSubjects = Parser.getExcludeSubjects(SharedPrefs(this).getInfo()!!).toList()
         //if have not complete assignments
-        if (completedAssignments.isEmpty()) {
+        if (excludedSubjects.isEmpty()) {
             //make toast about it
-            Toast.makeText(this, getString(R.string.have_no_completed_assignments), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.have_no_excluded_subject), Toast.LENGTH_SHORT).show()
             return
         }
-        val items = completedAssignments.map { it.title }.toTypedArray()
+        val items = excludedSubjects.map { it.name }.toTypedArray()
         val checkedItems = BooleanArray(items.size) { false }
 
         AlertDialog.Builder(this)
-            .setTitle(getString(R.string.choose_assignments))
+            .setTitle(getString(R.string.choose_subjects))
             .setMultiChoiceItems(items, checkedItems) { _, which, isChecked ->
                 checkedItems[which] = isChecked
             }
             .setPositiveButton(getString(R.string.apply)) { _, _ ->
-                val selectedItems = mutableListOf<Assignment>()
+                val selectedItems = mutableListOf<Subject>()
                 checkedItems.forEachIndexed { index, isChecked ->
                     if (isChecked) {
-                        selectedItems.add(completedAssignments[index])
+                        selectedItems.add(excludedSubjects[index])
                     }
                 }
-                processSelectedAssignments(selectedItems)
+                processSelectedSubjects(selectedItems)
             }
             .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
 
-    private fun processSelectedAssignments(assignments: List<Assignment>) {
-        // Показываем индикатор загрузки
+    private fun processSelectedSubjects(subjects: List<Subject>) {
         showLoadingOverlay()
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 // Выполняем запросы последовательно
-                assignments.forEach { assignment ->
+                subjects.forEach { subject ->
                     val success = withContext(Dispatchers.IO) {
                         try {
-                            val (savedUser, savedPass) = SharedPrefs(this@AssignmentsActivity).getCredentials()
+                            val (savedUser, savedPass) = SharedPrefs(this@SubjectsActivity).getCredentials()
                             if (savedUser != null && savedPass != null) {
-                                val response = ApiClient.inCompleteAssignmentService
-                                    .completeAssignment(savedUser, savedPass, assignment.id.toString())
+                                val response = ApiClient.includeSubjectService
+                                    .includeSubject(savedUser, savedPass, subject.id.toString())
                                 response.isSuccessful
                             } else false
                         } catch (e: Exception) {
@@ -258,11 +267,11 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
                     }
 
                     if (!success) {
-                        // Обработка ошибки для конкретного задания
+                        // Обработка ошибки для конкретного предмета
                         withContext(Dispatchers.Main) {
                             Toast.makeText(
-                                this@AssignmentsActivity,
-                                "Ошибка при пометке задания ${assignment.title} как невыполненного",
+                                this@SubjectsActivity,
+                                "Ошибка при включении предмета ${subject.name}",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -273,15 +282,15 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
                 withContext(Dispatchers.Main) {
                     hideLoadingOverlay()
                     ProfileUpdater.updateProfileData(
-                        this@AssignmentsActivity,
-                        listOf(this@AssignmentsActivity::updateRecyclerView)
+                        this@SubjectsActivity,
+                        listOf(this@SubjectsActivity::tmpForUpdateAndGetSubjects)
                     )
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     hideLoadingOverlay()
                     Toast.makeText(
-                        this@AssignmentsActivity,
+                        this@SubjectsActivity,
                         "Ошибка сети",
                         Toast.LENGTH_SHORT
                     ).show()

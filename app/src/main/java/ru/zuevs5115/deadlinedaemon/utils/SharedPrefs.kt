@@ -63,6 +63,27 @@ class SharedPrefs(context: Context) {
             prefs.getString("password", null)
         )
     }
+    fun saveSubjectsLastUpdate(subjectsLastUpdate: Long) {
+        prefs.edit().apply {
+            putLong("subjectsLastUpdate", subjectsLastUpdate)
+            apply()
+        }
+    }
+    fun getSubjectsLastUpdate(): Long {
+        return prefs.getLong("subjectsLastUpdate", 0)
+    }
+    fun saveSubjects(subjects: String) {
+        prefs.edit().apply {
+            putString("subjects", subjects)
+            apply()
+        }
+    }
+    fun getSubjects() : String? {
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - getSubjectsLastUpdate() > UPDATE_INTERVAL)
+            ProfileUpdater.getAllSubjects(context, listOf())
+        return prefs.getString("subjects", null)
+    }
     //clear allInformation (if you exit)
     fun clearInformation() {
         with(prefs.edit()) {
@@ -70,6 +91,8 @@ class SharedPrefs(context: Context) {
             remove("password")
             remove("info")
             remove("lastUpdate")
+            remove("subjects")
+            remove("subjectsLastUpdate")
             apply()
         }
     }

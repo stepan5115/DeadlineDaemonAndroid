@@ -67,6 +67,10 @@ class ProfileInfoActivity : AppCompatActivity(), LoadingOverlayHandler {
                     startActivity(Intent(this, SettingsActivity::class.java))
                     finish()
                 }
+                R.id.nav_subjects -> {
+                    startActivity(Intent(this, SubjectsActivity::class.java))
+                    finish()
+                }
                 R.id.nav_refresh -> {
                     //update information (make request)
                     ProfileUpdater.updateProfileData(this, listOf(this::loadProfileData))

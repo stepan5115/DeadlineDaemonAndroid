@@ -4,6 +4,7 @@ import android.util.Log
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.zuevs5115.deadlinedaemon.entities.Assignment
+import ru.zuevs5115.deadlinedaemon.entities.Subject
 import ru.zuevs5115.deadlinedaemon.entities.User
 
 //parse information (for last response parsing)
@@ -57,6 +58,21 @@ object Parser {
         }
         return result;
     }
+    fun fromJsonToSubjects(jsonString: String) : Set<Subject> {
+        val json = JSONObject(jsonString)
+        val result : MutableSet<Subject> = HashSet()
+        if (json.has("subjects")) {
+            val jsonArray : JSONArray = json.getJSONArray("subjects")
+            for (i in 0 until jsonArray.length()) {
+                val subjectJson = jsonArray.getJSONObject(i)
+                result.add(Subject(
+                    id = subjectJson.getLong("subject_id"),
+                    name = subjectJson.getString("name"),
+                ))
+            }
+        }
+        return result;
+    }
     //sync assignments (remove disappeared, add new)
     fun synchronizeAssignments(oldResult: MutableSet<Assignment>, newResult: Set<Assignment>) {
         val hashTmpNew : MutableMap<Long, Assignment> = HashMap()
@@ -91,6 +107,21 @@ object Parser {
                 ))
             }
         }
-        return result;
+        return result
+    }
+    fun getExcludeSubjects(jsonString: String): Set<Subject> {
+        val json = JSONObject(jsonString)
+        val result : MutableSet<Subject> = HashSet()
+        if (json.has("notificationExcludedSubjects")) {
+            val jsonArray : JSONArray = json.getJSONArray("notificationExcludedSubjects")
+            for (i in 0 until jsonArray.length()) {
+                val subjectJson = jsonArray.getJSONObject(i)
+                result.add(Subject(
+                    id = subjectJson.getLong("subject_id"),
+                    name = subjectJson.getString("name"),
+                ))
+            }
+        }
+        return result
     }
 }
