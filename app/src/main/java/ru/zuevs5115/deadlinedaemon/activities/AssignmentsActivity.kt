@@ -207,7 +207,7 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
             Toast.makeText(this, getString(R.string.have_no_completed_assignments), Toast.LENGTH_SHORT).show()
             return
         }
-        val items = completedAssignments.map { it }.toTypedArray()
+        val items = completedAssignments.map { it.title }.toTypedArray()
         val checkedItems = BooleanArray(items.size) { false }
 
         AlertDialog.Builder(this)
@@ -216,7 +216,7 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
                 checkedItems[which] = isChecked
             }
             .setPositiveButton(getString(R.string.apply)) { _, _ ->
-                val selectedItems = mutableListOf<String>()
+                val selectedItems = mutableListOf<Assignment>()
                 checkedItems.forEachIndexed { index, isChecked ->
                     if (isChecked) {
                         selectedItems.add(completedAssignments[index])
@@ -228,11 +228,9 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
             .show()
     }
 
-    private fun processSelectedAssignments(assignments: List<String>) {
-        // Здесь обрабатываем выбранные задания
+    private fun processSelectedAssignments(assignments: List<Assignment>) {
         assignments.forEach { assignment ->
-            Toast.makeText(this, "Обработка: ${assignment}", Toast.LENGTH_SHORT).show()
-            // Дополнительная логика обработки
+            ProfileEditor.inCompleteAssignment(assignment.id.toString(), this, listOf(this::tmp))
         }
     }
     //show progress bar

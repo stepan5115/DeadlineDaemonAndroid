@@ -25,6 +25,7 @@
         <activity android:name=".activities.SignUpActivity"/>
         <activity android:name=".activities.ProfileInfoActivity"/>
         <activity android:name=".activities.AssignmentsActivity" />
+        <activity android:name=".activities.SettingsActivity" />
     </application>
 
 </manifest>

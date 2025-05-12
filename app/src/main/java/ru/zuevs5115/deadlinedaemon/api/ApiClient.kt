@@ -25,4 +25,12 @@ object ApiClient {
         get() = retrofit.create(GetInfoService::class.java)
     val completeAssignmentService: CompleteAssignmentService
         get() = retrofit.create(CompleteAssignmentService::class.java)
+    val inCompleteAssignmentService: InCompleteAssignmentService
+        get() = retrofit.create(InCompleteAssignmentService::class.java)
+    val setNotificationStatusService: SetNotificationStatusService
+        get() = retrofit.create(SetNotificationStatusService::class.java)
+    val getAdminRightsService: GetAdminRightsService
+        get() = retrofit.create(GetAdminRightsService::class.java)
+    val setIntervalService: SetIntervalService
+        get() = retrofit.create(SetIntervalService::class.java)
 }

@@ -64,4 +64,24 @@
     <string name="choose_assignments">Выберите задания</string>
     <string name="apply">Применить</string>
     <string name="cancel">Отмена</string>
+    <string name="processing_pc">Обработка: %1$s</string>
+    <string name="seconds_short">сек.</string>
+    <string name="seconds_short_pc">%1$s сек.</string>
+    <string name="seconds">Секунды</string>
+    <string name="minutes_short">мин.</string>
+    <string name="minutes_short_pc">%1$s мин.</string>
+    <string name="minutes">Минуты</string>
+    <string name="hours_short">час.</string>
+    <string name="hours_short_pc">%1$s час.</string>
+    <string name="hours">Часы</string>
+    <string name="days_short">дн.</string>
+    <string name="days_short_pc">%1$s дн.</string>
+    <string name="days">Дни</string>
+    <string-array name="time_units">
+        <item>сек.</item>
+        <item>мин.</item>
+        <item>час.</item>
+        <item>дн.</item>
+    </string-array>
+
 </resources>

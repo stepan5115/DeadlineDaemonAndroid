@@ -64,6 +64,8 @@ class ProfileInfoActivity : AppCompatActivity(), LoadingOverlayHandler {
                 }
                 R.id.nav_settings -> {
                     //will be SUPER COOL CODE
+                    startActivity(Intent(this, SettingsActivity::class.java))
+                    finish()
                 }
                 R.id.nav_refresh -> {
                     //update information (make request)
@@ -131,7 +133,7 @@ class ProfileInfoActivity : AppCompatActivity(), LoadingOverlayHandler {
                 else getString(R.string.off_notifications)
             //convert time in readable format
             val seconds = user.notificationIntervalSeconds
-            binding.tvNotificationInterval.text = TimeFormatter.formatNotificationInterval(seconds)
+            binding.tvNotificationInterval.text = TimeFormatter.formatNotificationInterval(seconds, this)
             //excluded subjects
             binding.tvExcludedSubjects.text = user.notificationExcludedSubjects
             //complete assignments
