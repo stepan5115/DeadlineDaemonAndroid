@@ -101,7 +101,10 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
                     //already here
                 }
                 R.id.nav_settings -> {
-                    //will be SUPER COOL CODE
+                    //go to settings activity
+                    startActivity(Intent(this, SettingsActivity::class.java))
+                    //finish itself
+                    finish()
                 }
                 R.id.nav_refresh -> {
                     //update information (request to server) and update RecyclerView
