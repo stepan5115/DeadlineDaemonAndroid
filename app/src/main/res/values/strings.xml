@@ -9,6 +9,7 @@
     <string name="failed_load">Ошибка загрузки данных</string>
     <string name="failed_load_assignments">Ошибка загрузки заданий</string>
     <string name="failed_load_subjects">Ошибка загрузки дисциплин</string>
+    <string name="failed_load_groups">Ошибка загрузки дисциплин</string>
     <string name="not_specified">Не задан</string>
     <string name="welcome_back">Добро пожаловать</string>
     <string name="join_us">Регистрируйтесь</string>
@@ -39,6 +40,7 @@
     <string name="profile">Профиль</string>
     <string name="assignments">Задания</string>
     <string name="subjects">Дисциплины</string>
+    <string name="groups">Группы</string>
     <string name="actions">Действия</string>
     <string name="update_data">Обновить данные</string>
     <string name="add_assignment">Добавить задание</string>
@@ -60,11 +62,15 @@
     <string name="nav_settings">Настройки</string>
     <string name="empty_assignments">Нету заданий</string>
     <string name="empty_subjects">Нету дисциплин</string>
+    <string name="empty_groups">Нету групп</string>
     <string name="success_update">Успешно обновлена информация</string>
     <string name="mark_as_completed">Отметить как выполненное</string>
+    <string name="mark_as_exit">Выйти из группы</string>
     <string name="sure_mark_as_completed">Вы уверены, что хотите отметить задание "%1$s" как выполненное?</string>
+    <string name="sure_mark_as_exit">Вы уверены, что хотите вйти из группы "%1$s"?</string>
     <string name="have_no_completed_assignments">Нет выполненных заданий</string>
     <string name="have_no_excluded_subject">Нет заблокированных предметов</string>
+    <string name="have_no_excluded_groups">Нет групп без вас</string>
     <string name="choose_assignments">Выберите задания</string>
     <string name="choose_subjects">Выберите дисциплины</string>
     <string name="apply">Применить</string>

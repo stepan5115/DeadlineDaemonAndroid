@@ -69,7 +69,7 @@ class SharedPrefs(context: Context) {
             apply()
         }
     }
-    fun getSubjectsLastUpdate(): Long {
+    private fun getSubjectsLastUpdate(): Long {
         return prefs.getLong("subjectsLastUpdate", 0)
     }
     fun saveSubjects(subjects: String) {
@@ -84,6 +84,15 @@ class SharedPrefs(context: Context) {
             ProfileUpdater.getAllSubjects(context, listOf())
         return prefs.getString("subjects", null)
     }
+    fun saveGroups(groups: String) {
+        prefs.edit().apply {
+            putString("groups", groups)
+            apply()
+        }
+    }
+    fun getGroups() : String? {
+        return prefs.getString("groups", null)
+    }
     //clear allInformation (if you exit)
     fun clearInformation() {
         with(prefs.edit()) {
@@ -93,6 +102,7 @@ class SharedPrefs(context: Context) {
             remove("lastUpdate")
             remove("subjects")
             remove("subjectsLastUpdate")
+            remove("groups")
             apply()
         }
     }

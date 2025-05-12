@@ -2,6 +2,7 @@ package ru.zuevs5115.deadlinedaemon.utils
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +17,7 @@ import ru.zuevs5115.deadlinedaemon.api.ApiClient
 object ProfileUpdater {
     private val getInfoService = ApiClient.getInfoService
     private val getAllSubjectsService = ApiClient.getAllSubjectsService
+    private val getAllGroupsService = ApiClient.getAllGroupsService
 
     fun updateProfileData(activity: Context, listeners: List<() -> Unit>) {
         val context = activity.applicationContext
@@ -96,6 +98,50 @@ object ProfileUpdater {
                         }
                     }
                 } catch (e: Exception) {
+                    //set to amin thread to make Toasts
+                    withContext(Dispatchers.Main) {
+                        //hide loading if allow
+                        if (activity is LoadingOverlayHandler) activity.hideLoadingOverlay()
+                        //make toast about error
+                        Toast.makeText(context, context.getString(R.string.network_error, ""), Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+    }
+    fun getAllGroups(activity: Context, listeners: List<() -> Unit>) {
+        val context = activity.applicationContext
+        val (savedUser, savedPass) = SharedPrefs(context).getCredentials()
+        if (savedUser != null && savedPass != null) {
+            //show loading if allow
+            if (activity is LoadingOverlayHandler) activity.showLoadingOverlay()
+            //coroutine for async
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    //request
+                    val response = getAllGroupsService.getAllGroups(savedUser, savedPass)
+                    //set to amin thread to make Toasts
+                    withContext(Dispatchers.Main) {
+                        //hide loading if allow
+                        if (activity is LoadingOverlayHandler) activity.hideLoadingOverlay()
+                        //success
+                        if (response.isSuccessful) {
+                            //set lastUpdate and info
+                            val responseText = response.body()?.message ?: ""
+                            SharedPrefs(context).saveGroups(responseText)
+                            //toast about success
+                            //Toast.makeText(context, context.getString(R.string.success_update), Toast.LENGTH_SHORT).show()
+                            //do what user want
+                            listeners.forEach { it() }
+                        } else {
+                            //make toast about error
+                            val errorMessage = ErrorHandler.handleError(response)
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                            activity.startActivity(Intent(activity, LoginActivity::class.java))
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.d("HAHAHAHA", e.message!!)
                     //set to amin thread to make Toasts
                     withContext(Dispatchers.Main) {
                         //hide loading if allow

@@ -4,6 +4,7 @@ import android.util.Log
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.zuevs5115.deadlinedaemon.entities.Assignment
+import ru.zuevs5115.deadlinedaemon.entities.Group
 import ru.zuevs5115.deadlinedaemon.entities.Subject
 import ru.zuevs5115.deadlinedaemon.entities.User
 
@@ -56,7 +57,7 @@ object Parser {
                 ))
             }
         }
-        return result;
+        return result
     }
     fun fromJsonToSubjects(jsonString: String) : Set<Subject> {
         val json = JSONObject(jsonString)
@@ -68,6 +69,21 @@ object Parser {
                 result.add(Subject(
                     id = subjectJson.getLong("subject_id"),
                     name = subjectJson.getString("name"),
+                ))
+            }
+        }
+        return result
+    }
+    fun fromJsonToGroups(jsonString: String) : Set<Group> {
+        val json = JSONObject(jsonString)
+        val result : MutableSet<Group> = HashSet()
+        if (json.has("groups")) {
+            val jsonArray : JSONArray = json.getJSONArray("groups")
+            for (i in 0 until jsonArray.length()) {
+                val groupJson = jsonArray.getJSONObject(i)
+                result.add(Group(
+                    id = groupJson.getLong("group_id"),
+                    name = groupJson.getString("name"),
                 ))
             }
         }
