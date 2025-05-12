@@ -25,10 +25,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/colorPrimary"
-                android:title="@string/assignments"
+                app:title="@string/groups"
                 android:titleTextColor="@color/colorOnPrimary"
                 app:navigationIcon="@drawable/ic_menu"
-                app:menu="@menu/assignments_menu"/>
+                app:menu="@menu/appbar_refresh_add"/>
 
             <!-- Обёртка для RecyclerView -->
             <androidx.cardview.widget.CardView
@@ -57,7 +57,7 @@
             android:layout_gravity="start"
             android:fitsSystemWindows="true"
             android:background="@color/white"
-            app:menu="@menu/nav_menu"
+            app:menu="@menu/drawer_menu"
             app:itemTextColor="@color/nav_menu_text"
             app:itemIconTint="@color/nav_menu_icon"
             app:headerLayout="@layout/nav_header"/>
@@ -67,7 +67,7 @@
         android:id="@+id/loadingOverlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#80000000"
+        android:background="@color/overlay_shadow"
         android:visibility="gone"
         android:clickable="true">
         <ProgressBar

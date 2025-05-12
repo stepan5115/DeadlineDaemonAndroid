@@ -28,8 +28,7 @@
                 android:background="@color/colorPrimary"
                 app:title="@string/profile"
                 app:titleTextColor="@color/colorOnPrimary"
-                app:navigationIcon="@drawable/ic_refresh"
-                app:menu="@menu/profile_menu"/>
+                app:menu="@menu/appbar_refresh"/>
 
             <!-- Контент профиля -->
             <ScrollView
@@ -359,7 +358,7 @@
         android:id="@+id/loadingOverlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#80000000"
+        android:background="@color/overlay_shadow"
         android:visibility="gone"
         android:clickable="true">
 

@@ -18,7 +18,7 @@
             android:contentDescription="@string/login_image_description"
             android:src="@drawable/ic_login"
             android:layout_marginBottom="24dp"
-            app:tint="@color/colorPrimary" />
+            app:tint="@color/colorPrimary"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -27,7 +27,7 @@
             android:textSize="24sp"
             android:textColor="@color/colorOnBackground"
             android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -35,7 +35,7 @@
             android:text="@string/login_to_continue"
             android:textSize="16sp"
             android:textColor="@color/colorOutline"
-            android:layout_marginBottom="32dp" />
+            android:layout_marginBottom="32dp"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/usernameInputLayout"
@@ -46,17 +46,17 @@
             app:boxStrokeWidth="1dp"
             app:hintTextColor="@color/colorOnBackground"
             app:hintAnimationEnabled="true"
-            app:helperText="Username">
+            app:helperText="@string/username">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etUsername"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/username_hint"
+                android:hint="@string/username"
                 android:textColor="@color/colorOnBackground"
                 android:textColorHint="@color/colorOutline"
                 android:focusable="true"
-                android:focusableInTouchMode="true" />
+                android:focusableInTouchMode="true"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -68,18 +68,18 @@
             app:boxStrokeWidth="1dp"
             app:hintTextColor="@color/colorOnBackground"
             app:hintAnimationEnabled="true"
-            app:helperText="Password">
+            app:helperText="@string/password">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/password_hint"
+                android:hint="@string/password"
                 android:inputType="textPassword"
                 android:textColor="@color/colorOnBackground"
                 android:textColorHint="@color/colorOutline"
                 android:focusable="true"
-                android:focusableInTouchMode="true" />
+                android:focusableInTouchMode="true"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
@@ -90,7 +90,7 @@
             android:backgroundTint="@color/colorPrimary"
             android:textColor="@color/colorOnPrimary"
             android:layout_marginBottom="16dp"
-            style="@style/Widget.MaterialComponents.Button" />
+            style="@style/Widget.MaterialComponents.Button"/>
 
         <TextView
             android:id="@+id/tvError"
@@ -98,8 +98,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/colorError"
             android:layout_marginBottom="16dp"
-            android:gravity="center"
-            />
+            android:gravity="center" />
 
         <TextView
             android:id="@+id/btnSwitchToSignUp"
@@ -113,7 +112,7 @@
         android:id="@+id/loadingOverlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#80000000"
+        android:background="@color/overlay_shadow"
         android:visibility="gone"
         android:clickable="true"
         android:focusable="true"

@@ -55,7 +55,7 @@ class ProfileInfoActivity : AppCompatActivity(), LoadingOverlayHandler {
         binding.navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_profile -> {
-                    //already open
+                    //already here
                 }
                 R.id.nav_tasks -> {
                     //start activity assignments and finish itself
@@ -63,15 +63,17 @@ class ProfileInfoActivity : AppCompatActivity(), LoadingOverlayHandler {
                     finish()
                 }
                 R.id.nav_settings -> {
-                    //will be SUPER COOL CODE
+                    //start activity settings and finish itself
                     startActivity(Intent(this, SettingsActivity::class.java))
                     finish()
                 }
                 R.id.nav_subjects -> {
+                    //start activity subject and finish itself
                     startActivity(Intent(this, SubjectsActivity::class.java))
                     finish()
                 }
                 R.id.nav_groups -> {
+                    //start activity groups and finish itself
                     startActivity(Intent(this, GroupsActivity::class.java))
                     finish()
                 }
@@ -103,14 +105,14 @@ class ProfileInfoActivity : AppCompatActivity(), LoadingOverlayHandler {
                 ProfileUpdater.updateProfileData(this, listOf(this::loadProfileData))
                 true
             }
-            //make what you wand
+            //make what you want
             else -> super.onOptionsItemSelected(item)
         }
     }
     //load menu xml
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         //make menu from xml
-        menuInflater.inflate(R.menu.profile_menu, menu)
+        menuInflater.inflate(R.menu.appbar_refresh, menu)
         return true
     }
     //fill UI information about profile
@@ -164,7 +166,7 @@ class ProfileInfoActivity : AppCompatActivity(), LoadingOverlayHandler {
     private fun logout() {
         //clear login information
         SharedPrefs(this).clearInformation()
-        //go to login and clear information
+        //go to login
         startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }
@@ -176,8 +178,8 @@ class ProfileInfoActivity : AppCompatActivity(), LoadingOverlayHandler {
             drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             //else go to login and clear information
-            startActivity(Intent(this, LoginActivity::class.java))
             SharedPrefs(this).clearInformation()
+            startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
     }

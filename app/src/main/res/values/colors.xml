@@ -21,6 +21,9 @@
     <color name="colorError">#D9534F</color> <!-- мягкий красный для ошибок -->
     <color name="colorOnError">#FFFFFF</color>
 
+    <!-- Overlay -->
+    <color name="overlay_shadow">#80000000</color>
+
     <color name="black">#000000</color>
     <color name="teal_200">#03DAC5</color>
     <color name="teal_700">#018786</color>

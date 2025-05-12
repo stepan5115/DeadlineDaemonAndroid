@@ -1,33 +1,25 @@
 <resources>
-    <string name="app_name">DeadlineDaemon</string>
-    <string name="network_error">Ошибка сети: %1$s</string>
-    <string name="last_update">Последнее обновление: %1$s</string>
-    <string name="get_username_and_password">Введите имя пользователя и пароль</string>
-    <string name="not_update">Не обновлялось</string>
-    <string name="on_notifications">Включены</string>
-    <string name="off_notifications">Выключены</string>
-    <string name="failed_load">Ошибка загрузки данных</string>
-    <string name="failed_load_assignments">Ошибка загрузки заданий</string>
-    <string name="failed_load_subjects">Ошибка загрузки дисциплин</string>
-    <string name="failed_load_groups">Ошибка загрузки дисциплин</string>
-    <string name="not_specified">Не задан</string>
-    <string name="welcome_back">Добро пожаловать</string>
-    <string name="join_us">Регистрируйтесь</string>
-    <string name="login_to_continue">Войдите чтобы продолжить</string>
-    <string name="signup_to_continue">Зарегистрируйтесь чтобы продолжить</string>
-    <string name="username_hint">Имя</string>
-    <string name="password_hint">Пароль</string>
-    <string name="login">Войти</string>
-    <string name="signup">Зарегистрироваться</string>
-    <string name="switch_to_signup">Нет аккаунта? Зарегистрируйтесь!</string>
-    <string name="switch_to_login">Есть аккаунт? Войдите!</string>
+    <!-- Use in logIn/SignUp activities -->
     <string name="login_image_description">Иконка входа</string>
+    <string name="welcome_back">Добро пожаловать</string>
+    <string name="login_to_continue">Войдите чтобы продолжить</string>
+    <string name="login">Войти</string>
+    <string name="switch_to_signup">Нет аккаунта? Зарегистрируйтесь!</string>
     <string name="signup_image_description">Иконка регистрации</string>
+    <string name="join_us">Регистрируйтесь</string>
+    <string name="signup_to_continue">Зарегистрируйтесь чтобы продолжить</string>
+    <string name="signup">Зарегистрироваться</string>
+    <string name="switch_to_login">Есть аккаунт? Войдите!</string>
+    <string name="username">Имя</string>
+    <string name="password">Пароль</string>
+    <string name="get_username_and_password">Введите имя пользователя и пароль</string>
+    <!-- Use in profile info activity -->
+    <string name="not_update">Не обновлялось</string>
+    <string name="profile">Профиль</string>
     <string name="base_information">Основная информация</string>
     <string name="id_field">ID:</string>
     <string name="name_field">Имя:</string>
     <string name="groups_field">Группы:</string>
-    <string name="groups_field_ph">Группы: %1$s</string>
     <string name="settings">Настройки</string>
     <string name="edit_field">Редактирование задач:</string>
     <string name="notification_field">Уведомления:</string>
@@ -35,12 +27,63 @@
     <string name="excluded_field">Исключенные предметы:</string>
     <string name="complete_field">Выполненные задания</string>
     <string name="last_update_text">Последнее обновление:</string>
+    <string name="failed_load">Ошибка загрузки данных</string>
+    <string name="on_notifications">Включены</string>
+    <string name="off_notifications">Выключены</string>
+    <!-- Use in assignments activity -->
+    <string name="failed_load_assignments">Ошибка загрузки заданий</string>
+    <string name="empty_assignments">Нету заданий</string>
+    <string name="mark_as_completed">Отметить как выполненное</string>
+    <string name="sure_mark_as_completed">Вы уверены, что хотите отметить задание "%1$s" как выполненное?</string>
+    <string name="choose_assignment">Выберите задание чтобы пометить как не выполненное</string>
+    <string name="have_no_completed_assignments">Нет выполненных заданий</string>
+    <string name="have_not_choose_assignment">Задание не выбрано</string>
+    <string name="assignments">Задания</string>
+    <!-- Use in group activity -->
+    <string name="have_not_choose_group">Группа не выбрана</string>
+    <string name="failed_load_groups">Ошибка загрузки дисциплин</string>
+    <string name="empty_groups">Нету групп</string>
+    <string name="mark_as_exit">Выйти из группы</string>
+    <string name="sure_mark_as_exit">Вы уверены, что хотите вйти из группы "%1$s"?</string>
+    <string name="have_no_excluded_groups">Нет групп без вас</string>
+    <string name="choose_group">Выберите группу для входа</string>
+    <string name="groups">Группы</string>
+    <!-- Use in subject activity -->
+    <string name="failed_load_subjects">Ошибка загрузки дисциплин</string>
+    <string name="empty_subjects">Нету дисциплин</string>
+    <string name="mark_as_include">Разблокировать предмет</string>
+    <string name="choose_subject">Выберите предмет чтобы заблокировать</string>
+    <string name="have_not_choose_subject">Предмет не выбрана</string>
+    <string name="sure_mark_as_include">Вы уверены, что хотите разблокировать дисциплину "%1$s"?</string>
+    <string name="have_no_excluded_subject">Нет заблокированных предметов</string>
+    <!-- Dialogs -->
+    <string name="choose">Выберите из списка</string>
+    <string name="Yes">Да</string>
+    <string name="No">Нет</string>
+
+
+
+
+
+
+
+    <string name="app_name">DeadlineDaemon</string>
+    <string name="network_error_ph">Ошибка сети: %1$s</string>
+    <string name="network_error">Ошибка сети</string>
+    <string name="last_update">Последнее обновление: %1$s</string>
+
+
+
+    <string name="not_specified">Не задан</string>
+
+
+    <string name="groups_field_ph">Группы: %1$s</string>
+
     <string name="menu">Меню</string>
     <string name="base_sections">Основные разделы</string>
-    <string name="profile">Профиль</string>
-    <string name="assignments">Задания</string>
+
     <string name="subjects">Дисциплины</string>
-    <string name="groups">Группы</string>
+
     <string name="actions">Действия</string>
     <string name="update_data">Обновить данные</string>
     <string name="add_assignment">Добавить задание</string>
@@ -56,25 +99,19 @@
     <string name="subject_field_ph">Предмет: %1$s</string>
     <string name="no_current_assignments">Нет текущих заданий</string>
     <string name="assignment_parsing_error">Ошибка при разборе заданий</string>
-    <string name="Yes">Да</string>
-    <string name="No">Нет</string>
     <string name="nav_profile">Профиль</string>
     <string name="nav_settings">Настройки</string>
-    <string name="empty_assignments">Нету заданий</string>
-    <string name="empty_subjects">Нету дисциплин</string>
-    <string name="empty_groups">Нету групп</string>
+
+
+
     <string name="success_update">Успешно обновлена информация</string>
-    <string name="mark_as_completed">Отметить как выполненное</string>
-    <string name="mark_as_exit">Выйти из группы</string>
-    <string name="sure_mark_as_completed">Вы уверены, что хотите отметить задание "%1$s" как выполненное?</string>
-    <string name="sure_mark_as_exit">Вы уверены, что хотите вйти из группы "%1$s"?</string>
-    <string name="have_no_completed_assignments">Нет выполненных заданий</string>
-    <string name="have_no_excluded_subject">Нет заблокированных предметов</string>
-    <string name="have_no_excluded_groups">Нет групп без вас</string>
+
+
+
+
+
     <string name="choose_assignments">Выберите задания</string>
     <string name="choose_subjects">Выберите дисциплины</string>
-    <string name="apply">Применить</string>
-    <string name="cancel">Отмена</string>
     <string name="processing_pc">Обработка: %1$s</string>
     <string name="seconds_short">сек.</string>
     <string name="seconds_short_pc">%1$s сек.</string>

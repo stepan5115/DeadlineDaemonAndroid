@@ -19,7 +19,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar"
-                app:title="Твоя активность"/>
+                app:title="@string/settings"/>
             <ScrollView
                 android:background="@color/colorBackground"
                 android:layout_width="match_parent"
@@ -100,7 +100,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            app:menu="@menu/nav_menu"
+            app:menu="@menu/drawer_menu"
             app:headerLayout="@layout/nav_header"/>
     </androidx.drawerlayout.widget.DrawerLayout>
     <FrameLayout

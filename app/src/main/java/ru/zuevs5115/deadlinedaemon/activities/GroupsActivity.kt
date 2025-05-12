@@ -13,18 +13,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ru.zuevs5115.deadlinedaemon.R
 import ru.zuevs5115.deadlinedaemon.adapters.GroupAdapter
-import ru.zuevs5115.deadlinedaemon.adapters.SubjectAdapter
-import ru.zuevs5115.deadlinedaemon.api.ApiClient
 import ru.zuevs5115.deadlinedaemon.databinding.ActivityGroupsBinding
-import ru.zuevs5115.deadlinedaemon.databinding.ActivitySubjectsBinding
 import ru.zuevs5115.deadlinedaemon.entities.Group
-import ru.zuevs5115.deadlinedaemon.entities.Subject
 import ru.zuevs5115.deadlinedaemon.utils.Parser
 import ru.zuevs5115.deadlinedaemon.utils.ProfileEditor
 import ru.zuevs5115.deadlinedaemon.utils.ProfileUpdater
@@ -71,7 +63,7 @@ class GroupsActivity : AppCompatActivity(), LoadingOverlayHandler {
     }
     //set menu xml
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.assignments_menu, menu)
+        menuInflater.inflate(R.menu.appbar_refresh_add, menu)
         return true
     }
     //setup actions for toolbar buttons
@@ -84,7 +76,6 @@ class GroupsActivity : AppCompatActivity(), LoadingOverlayHandler {
             }
             //update information and update RecyclerView
             R.id.action_refresh -> {
-                ProfileUpdater
                 ProfileUpdater.updateProfileData(this, listOf(this::updateRecyclerView))
                 true
             }
@@ -103,22 +94,27 @@ class GroupsActivity : AppCompatActivity(), LoadingOverlayHandler {
         binding.navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_profile -> {
-                    //go to profile info activity
+                    //go to profile info activity and finish itself
                     startActivity(Intent(this, ProfileInfoActivity::class.java))
-                    //finish itself
                     finish()
                 }
                 R.id.nav_tasks -> {
-                    //go to tasks activity
+                    //go to tasks activity and finish itself
                     startActivity(Intent(this, AssignmentsActivity::class.java))
-                    //finish itself
                     finish()
                 }
                 R.id.nav_settings -> {
-                    //go to settings
+                    //go to settings and finish itself
                     startActivity(Intent(this, SettingsActivity::class.java))
-                    //finish itself
                     finish()
+                }
+                R.id.nav_subjects -> {
+                    //start activity subject and finish itself
+                    startActivity(Intent(this, SubjectsActivity::class.java))
+                    finish()
+                }
+                R.id.nav_groups -> {
+                    //already here
                 }
                 R.id.nav_refresh -> {
                     //update information (request to server) and update RecyclerView
@@ -140,7 +136,6 @@ class GroupsActivity : AppCompatActivity(), LoadingOverlayHandler {
         SharedPrefs(this).clearInformation()
         //go to login
         startActivity(Intent(this, LoginActivity::class.java))
-        //finish
         finish()
     }
     //if back button pressed
@@ -211,41 +206,42 @@ class GroupsActivity : AppCompatActivity(), LoadingOverlayHandler {
     }
     //function to update information if success complete assignment
     //success response -> update information -> update RecyclerView
-
+    //simply transferring its contents will not work, because parameters are required.
+    // That's why this function is needed.
     private fun tmp() {
         ProfileUpdater.updateProfileData(this, listOf(this::updateRecyclerView))
     }
+    //where choose item from list
     private fun showEnterGroupDialog() {
+        //get data
         val groupsWithoutUser = Parser.fromJsonToGroups(SharedPrefs(this).getGroups()!!).toList()
         if (groupsWithoutUser.isEmpty()) {
             Toast.makeText(this, getString(R.string.have_no_excluded_groups), Toast.LENGTH_SHORT).show()
             return
         }
-
+        val groupNames = groupsWithoutUser.map { it.name }
+        //setup dialog
         val dialogView = layoutInflater.inflate(R.layout.dialog_spinner_groups, null)
         val autoCompleteTextView = dialogView.findViewById<AutoCompleteTextView>(R.id.groupDropdown)
-        val groupNames = groupsWithoutUser.map { it.name }
-
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, groupNames)
         autoCompleteTextView.setAdapter(adapter)
-
         autoCompleteTextView.setOnClickListener {
             autoCompleteTextView.showDropDown()
         }
-
+        //create dialog
         AlertDialog.Builder(this)
-            .setTitle(getString(R.string.choose_subjects))
+            .setTitle(getString(R.string.choose_group))
             .setView(dialogView)
-            .setPositiveButton(getString(R.string.apply)) { _, _ ->
+            .setPositiveButton(getString(R.string.Yes)) { _, _ ->
                 val selectedName = autoCompleteTextView.text.toString()
                 val selectedGroup = groupsWithoutUser.find { it.name == selectedName }
                 if (selectedGroup != null) {
                     processSelectedGroups(selectedGroup)
                 } else {
-                    Toast.makeText(this, "Группа не выбрана", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.have_not_choose_group), Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton(getString(R.string.cancel), null)
+            .setNegativeButton(getString(R.string.No), null)
             .show()
     }
 

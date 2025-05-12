@@ -6,18 +6,15 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ru.zuevs5115.deadlinedaemon.R
 import ru.zuevs5115.deadlinedaemon.adapters.AssignmentAdapter
-import ru.zuevs5115.deadlinedaemon.api.ApiClient
 import ru.zuevs5115.deadlinedaemon.databinding.ActivityAssignmentsBinding
 import ru.zuevs5115.deadlinedaemon.entities.Assignment
 import ru.zuevs5115.deadlinedaemon.utils.Parser
@@ -66,7 +63,7 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
     }
     //set menu xml
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.assignments_menu, menu)
+        menuInflater.inflate(R.menu.appbar_refresh_add, menu)
         return true
     }
     //setup actions for toolbar buttons
@@ -97,18 +94,26 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
         binding.navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_profile -> {
-                    //go to profile info activity
+                    //go to profile info activity and finish itself
                     startActivity(Intent(this, ProfileInfoActivity::class.java))
-                    //finish itself
                     finish()
                 }
                 R.id.nav_tasks -> {
                     //already here
                 }
                 R.id.nav_settings -> {
-                    //go to settings activity
+                    //go to settings activity and finish itself
                     startActivity(Intent(this, SettingsActivity::class.java))
-                    //finish itself
+                    finish()
+                }
+                R.id.nav_subjects -> {
+                    //start activity subject and finish itself
+                    startActivity(Intent(this, SubjectsActivity::class.java))
+                    finish()
+                }
+                R.id.nav_groups -> {
+                    //start activity groups and finish itself
+                    startActivity(Intent(this, GroupsActivity::class.java))
                     finish()
                 }
                 R.id.nav_refresh -> {
@@ -131,7 +136,6 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
         SharedPrefs(this).clearInformation()
         //go to login
         startActivity(Intent(this, LoginActivity::class.java))
-        //finish
         finish()
     }
     //if back button pressed
@@ -202,6 +206,8 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
     }
     //function to update information if success complete assignment
     //success response -> update information -> update RecyclerView
+    //simply transferring its contents will not work, because parameters are required.
+    // That's why this function is needed.
     private fun tmp() {
         ProfileUpdater.updateProfileData(this, listOf(this::updateRecyclerView))
     }
@@ -215,79 +221,34 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
             Toast.makeText(this, getString(R.string.have_no_completed_assignments), Toast.LENGTH_SHORT).show()
             return
         }
-        val items = completedAssignments.map { it.title }.toTypedArray()
-        val checkedItems = BooleanArray(items.size) { false }
-
+        val groupNames = completedAssignments.map { it.title }
+        //setup dialog
+        val dialogView = layoutInflater.inflate(R.layout.dialog_spinner_groups, null)
+        val autoCompleteTextView = dialogView.findViewById<AutoCompleteTextView>(R.id.groupDropdown)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, groupNames)
+        autoCompleteTextView.setAdapter(adapter)
+        autoCompleteTextView.setOnClickListener {
+            autoCompleteTextView.showDropDown()
+        }
+        //create dialog
         AlertDialog.Builder(this)
-            .setTitle(getString(R.string.choose_assignments))
-            .setMultiChoiceItems(items, checkedItems) { _, which, isChecked ->
-                checkedItems[which] = isChecked
-            }
-            .setPositiveButton(getString(R.string.apply)) { _, _ ->
-                val selectedItems = mutableListOf<Assignment>()
-                checkedItems.forEachIndexed { index, isChecked ->
-                    if (isChecked) {
-                        selectedItems.add(completedAssignments[index])
-                    }
+            .setTitle(getString(R.string.choose_assignment))
+            .setView(dialogView)
+            .setPositiveButton(getString(R.string.Yes)) { _, _ ->
+                val selectedTitle = autoCompleteTextView.text.toString()
+                val selectedAssignment = completedAssignments.find { it.title == selectedTitle }
+                if (selectedAssignment != null) {
+                    processSelectedAssignment(selectedAssignment)
+                } else {
+                    Toast.makeText(this, getString(R.string.have_not_choose_assignment), Toast.LENGTH_SHORT).show()
                 }
-                processSelectedAssignments(selectedItems)
             }
-            .setNegativeButton(getString(R.string.cancel), null)
+            .setNegativeButton(getString(R.string.No), null)
             .show()
     }
-
-    private fun processSelectedAssignments(assignments: List<Assignment>) {
-        // Показываем индикатор загрузки
-        showLoadingOverlay()
-
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                // Выполняем запросы последовательно
-                assignments.forEach { assignment ->
-                    val success = withContext(Dispatchers.IO) {
-                        try {
-                            val (savedUser, savedPass) = SharedPrefs(this@AssignmentsActivity).getCredentials()
-                            if (savedUser != null && savedPass != null) {
-                                val response = ApiClient.inCompleteAssignmentService
-                                    .completeAssignment(savedUser, savedPass, assignment.id.toString())
-                                response.isSuccessful
-                            } else false
-                        } catch (e: Exception) {
-                            false
-                        }
-                    }
-
-                    if (!success) {
-                        // Обработка ошибки для конкретного задания
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(
-                                this@AssignmentsActivity,
-                                "Ошибка при пометке задания ${assignment.title} как невыполненного",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                }
-
-                // Обновляем данные один раз после всех запросов
-                withContext(Dispatchers.Main) {
-                    hideLoadingOverlay()
-                    ProfileUpdater.updateProfileData(
-                        this@AssignmentsActivity,
-                        listOf(this@AssignmentsActivity::updateRecyclerView)
-                    )
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    hideLoadingOverlay()
-                    Toast.makeText(
-                        this@AssignmentsActivity,
-                        "Ошибка сети",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
+    //process selected from dialog to incomplete assignment
+    private fun processSelectedAssignment(assignment: Assignment) {
+        ProfileEditor.inCompleteAssignment(assignment.id.toString(), this, listOf(this::tmp))
     }
     //show progress bar
     override fun showLoadingOverlay() {

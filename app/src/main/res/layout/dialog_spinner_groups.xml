@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- For choose dialog -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:padding="20dp"
@@ -9,7 +10,7 @@
         android:id="@+id/groupDropdown"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Выберите группу"
+        android:hint="@string/choose"
         android:inputType="none"
         android:focusable="false"
         android:clickable="true"

@@ -70,6 +70,16 @@ class SettingsActivity : AppCompatActivity(), LoadingOverlayHandler {
                 R.id.nav_settings -> {
                     //already there
                 }
+                //set to subjects
+                R.id.nav_subjects -> {
+                    startActivity(Intent(this, SubjectsActivity::class.java))
+                    finish()
+                }
+                //set to groups
+                R.id.nav_groups -> {
+                    startActivity(Intent(this, GroupsActivity::class.java))
+                    finish()
+                }
                 //update information (make request)
                 R.id.nav_refresh -> {
                     ProfileUpdater.updateProfileData(this, listOf(this::fillDefaultValues))
@@ -95,7 +105,7 @@ class SettingsActivity : AppCompatActivity(), LoadingOverlayHandler {
     //setup menu toolbar
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         //make menu from xml
-        menuInflater.inflate(R.menu.profile_menu, menu)
+        menuInflater.inflate(R.menu.appbar_refresh_add, menu)
         return true
     }
     //setup toolbar actions
