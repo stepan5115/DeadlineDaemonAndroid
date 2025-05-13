@@ -2,7 +2,6 @@ package ru.zuevs5115.deadlinedaemon.utils
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.widget.Toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,13 +12,12 @@ import ru.zuevs5115.deadlinedaemon.activities.LoadingOverlayHandler
 import ru.zuevs5115.deadlinedaemon.activities.LoginActivity
 import ru.zuevs5115.deadlinedaemon.api.ApiClient
 
-//profile info updater (request for server)
-object ProfileUpdater {
-    private val getInfoService = ApiClient.getInfoService
-    private val getAllSubjectsService = ApiClient.getAllSubjectsService
-    private val getAllGroupsService = ApiClient.getAllGroupsService
+object GetData {
+    private val getAllAssignmentsIndependenceUserService = ApiClient.getAllAssignmentsIndependenceUserService
+    private val getAllSubjectsIndependenceUserService = ApiClient.getAllSubjectsIndependenceUserService
+    private val getAllGroupsIndependenceUserService = ApiClient.getAllGroupsIndependenceUserService
 
-    fun updateProfileData(activity: Context, listeners: List<() -> Unit>) {
+    fun getAllGroupsIndependenceUser(activity: Context, listeners: List<() -> Unit>) {
         val context = activity.applicationContext
         val (savedUser, savedPass) = SharedPrefs(context).getCredentials()
         if (savedUser != null && savedPass != null) {
@@ -29,7 +27,7 @@ object ProfileUpdater {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     //request
-                    val response = getInfoService.getInfo(savedUser, savedPass)
+                    val response = getAllGroupsIndependenceUserService.getAllGroupsIndependenceUser(savedUser, savedPass)
                     //set to amin thread to make Toasts
                     withContext(Dispatchers.Main) {
                         //hide loading if allow
@@ -37,10 +35,8 @@ object ProfileUpdater {
                         //success
                         if (response.isSuccessful) {
                             //set lastUpdate and info
-                            val lastUpdate = System.currentTimeMillis()
                             val responseText = response.body()?.message ?: ""
-                            SharedPrefs(context).saveInfo(responseText)
-                            SharedPrefs(context).saveLastUpdate(lastUpdate)
+                            SharedPrefs(context).saveAllGroups(responseText)
                             //toast about success
                             //Toast.makeText(context, context.getString(R.string.success_update), Toast.LENGTH_SHORT).show()
                             //do what user want
@@ -64,7 +60,8 @@ object ProfileUpdater {
             }
         }
     }
-    fun getAllSubjects(activity: Context, listeners: List<() -> Unit>) {
+
+    fun getAllSubjectsIndependenceUser(activity: Context, listeners: List<() -> Unit>) {
         val context = activity.applicationContext
         val (savedUser, savedPass) = SharedPrefs(context).getCredentials()
         if (savedUser != null && savedPass != null) {
@@ -74,7 +71,7 @@ object ProfileUpdater {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     //request
-                    val response = getAllSubjectsService.getAllSubjects(savedUser, savedPass)
+                    val response = getAllSubjectsIndependenceUserService.getAllSubjectsIndependenceUserService(savedUser, savedPass)
                     //set to amin thread to make Toasts
                     withContext(Dispatchers.Main) {
                         //hide loading if allow
@@ -83,7 +80,7 @@ object ProfileUpdater {
                         if (response.isSuccessful) {
                             //set lastUpdate and info
                             val responseText = response.body()?.message ?: ""
-                            SharedPrefs(context).saveSubjects(responseText)
+                            SharedPrefs(context).saveAllSubjects(responseText)
                             //toast about success
                             //Toast.makeText(context, context.getString(R.string.success_update), Toast.LENGTH_SHORT).show()
                             //do what user want
@@ -96,50 +93,6 @@ object ProfileUpdater {
                         }
                     }
                 } catch (e: Exception) {
-                    //set to amin thread to make Toasts
-                    withContext(Dispatchers.Main) {
-                        //hide loading if allow
-                        if (activity is LoadingOverlayHandler) activity.hideLoadingOverlay()
-                        //make toast about error
-                        Toast.makeText(context, context.getString(R.string.network_error_ph, ""), Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        }
-    }
-    fun getAllGroups(activity: Context, listeners: List<() -> Unit>) {
-        val context = activity.applicationContext
-        val (savedUser, savedPass) = SharedPrefs(context).getCredentials()
-        if (savedUser != null && savedPass != null) {
-            //show loading if allow
-            if (activity is LoadingOverlayHandler) activity.showLoadingOverlay()
-            //coroutine for async
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    //request
-                    val response = getAllGroupsService.getAllGroups(savedUser, savedPass)
-                    //set to amin thread to make Toasts
-                    withContext(Dispatchers.Main) {
-                        //hide loading if allow
-                        if (activity is LoadingOverlayHandler) activity.hideLoadingOverlay()
-                        //success
-                        if (response.isSuccessful) {
-                            //set lastUpdate and info
-                            val responseText = response.body()?.message ?: ""
-                            SharedPrefs(context).saveGroups(responseText)
-                            //toast about success
-                            //Toast.makeText(context, context.getString(R.string.success_update), Toast.LENGTH_SHORT).show()
-                            //do what user want
-                            listeners.forEach { it() }
-                        } else {
-                            //make toast about error
-                            val errorMessage = ErrorHandler.handleError(response)
-                            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-                            activity.startActivity(Intent(activity, LoginActivity::class.java))
-                        }
-                    }
-                } catch (e: Exception) {
-                    Log.d("HAHAHAHA", e.message!!)
                     //set to amin thread to make Toasts
                     withContext(Dispatchers.Main) {
                         //hide loading if allow

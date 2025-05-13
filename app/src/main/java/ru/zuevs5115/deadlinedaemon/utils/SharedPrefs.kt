@@ -63,15 +63,6 @@ class SharedPrefs(context: Context) {
             prefs.getString("password", null)
         )
     }
-    fun saveSubjectsLastUpdate(subjectsLastUpdate: Long) {
-        prefs.edit().apply {
-            putLong("subjectsLastUpdate", subjectsLastUpdate)
-            apply()
-        }
-    }
-    private fun getSubjectsLastUpdate(): Long {
-        return prefs.getLong("subjectsLastUpdate", 0)
-    }
     fun saveSubjects(subjects: String) {
         prefs.edit().apply {
             putString("subjects", subjects)
@@ -79,10 +70,16 @@ class SharedPrefs(context: Context) {
         }
     }
     fun getSubjects() : String? {
-        val currentTime = System.currentTimeMillis()
-        if (currentTime - getSubjectsLastUpdate() > UPDATE_INTERVAL)
-            ProfileUpdater.getAllSubjects(context, listOf())
         return prefs.getString("subjects", null)
+    }
+    fun getAllSubjects() : String? {
+        return prefs.getString("allSubjects", null)
+    }
+    fun saveAllSubjects(allSubjects: String) {
+        prefs.edit().apply {
+            putString("allSubjects", allSubjects)
+            apply()
+        }
     }
     fun saveGroups(groups: String) {
         prefs.edit().apply {
@@ -93,6 +90,24 @@ class SharedPrefs(context: Context) {
     fun getGroups() : String? {
         return prefs.getString("groups", null)
     }
+    fun getAllGroups() : String? {
+        return prefs.getString("allGroups", null)
+    }
+    fun saveAllGroups(allSubjects: String) {
+        prefs.edit().apply {
+            putString("allGroups", allSubjects)
+            apply()
+        }
+    }
+    fun getAllAssignments() : String? {
+        return prefs.getString("allAssignments", null)
+    }
+    fun saveAllAssignments(allSubjects: String) {
+        prefs.edit().apply {
+            putString("allAssignments", allSubjects)
+            apply()
+        }
+    }
     //clear allInformation (if you exit)
     fun clearInformation() {
         with(prefs.edit()) {
@@ -101,8 +116,10 @@ class SharedPrefs(context: Context) {
             remove("info")
             remove("lastUpdate")
             remove("subjects")
-            remove("subjectsLastUpdate")
             remove("groups")
+            remove("allSubjects")
+            remove("allGroups")
+            remove("allAssignments")
             apply()
         }
     }

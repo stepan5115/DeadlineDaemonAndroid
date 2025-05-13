@@ -105,7 +105,7 @@ class SettingsActivity : AppCompatActivity(), LoadingOverlayHandler {
     //setup menu toolbar
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         //make menu from xml
-        menuInflater.inflate(R.menu.appbar_refresh_add, menu)
+        menuInflater.inflate(R.menu.appbar_refresh, menu)
         return true
     }
     //setup toolbar actions

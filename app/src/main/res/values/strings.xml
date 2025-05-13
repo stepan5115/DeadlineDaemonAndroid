@@ -56,6 +56,26 @@
     <string name="have_not_choose_subject">Предмет не выбрана</string>
     <string name="sure_mark_as_include">Вы уверены, что хотите разблокировать дисциплину "%1$s"?</string>
     <string name="have_no_excluded_subject">Нет заблокированных предметов</string>
+    <!-- Use in management -->
+    <string name="management">Управление</string>
+    <string name="assignment_management">Управление заданиями</string>
+    <string name="token_management">Управление токенами</string>
+    <string name="subject_management">Управление предметами</string>
+    <string name="group_management">Управление группами</string>
+    <string name="assignment_create">Создать задание</string>
+    <string name="assignment_delete">Удалить задание</string>
+    <string name="generate_token">Сгенерировать токен</string>
+    <string name="subject_create">Создать предмет</string>
+    <string name="subject_delete">Удалить предмет</string>
+    <string name="group_create">Создать группу</string>
+    <string name="group_delete">Удалить предмет</string>
+    <string name="enter_title">Введите название</string>
+    <string name="title">Заголовок</string>
+    <string name="description">Описание</string>
+    <string name="choose_groups">Выберите группы:</string>
+    <string name="choose_groups_simple">Выбрать группы</string>
+    <string name="deadline">Дедлайн</string>
+    <string name="choose_subject_manager">Выберите предмет</string>
     <!-- Dialogs -->
     <string name="choose">Выберите из списка</string>
     <string name="Yes">Да</string>

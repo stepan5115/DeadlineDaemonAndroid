@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- Toolbar -->
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar"
+                app:title="@string/management"/>
+
+            <ScrollView
+                android:background="@color/colorBackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:padding="24dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <!-- Assignments Section -->
+                    <TextView
+                        android:text="@string/assignment_management"
+                        android:textColor="@color/colorPrimaryText"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <Button
+                        android:id="@+id/button_create_assignment"
+                        android:text="@string/assignment_create"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:textColor="@color/colorOnPrimary"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <Button
+                        android:id="@+id/button_delete_assignment"
+                        android:text="@string/assignment_delete"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:textColor="@color/colorOnPrimary"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <!-- Token Section -->
+                    <TextView
+                        android:text="@string/token_management"
+                        android:textColor="@color/colorPrimaryText"
+                        android:textSize="18sp"
+                        android:layout_marginTop="16dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <Button
+                        android:id="@+id/button_generate_token"
+                        android:text="@string/generate_token"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:textColor="@color/colorOnPrimary"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <!-- Subjects Section -->
+                    <TextView
+                        android:text="@string/subject_management"
+                        android:textColor="@color/colorPrimaryText"
+                        android:textSize="18sp"
+                        android:layout_marginTop="16dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <Button
+                        android:id="@+id/button_create_subject"
+                        android:text="@string/subject_create"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:textColor="@color/colorOnPrimary"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <Button
+                        android:id="@+id/button_delete_subject"
+                        android:text="@string/subject_delete"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:textColor="@color/colorOnPrimary"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <!-- Groups Section -->
+                    <TextView
+                        android:text="@string/group_management"
+                        android:textColor="@color/colorPrimaryText"
+                        android:textSize="18sp"
+                        android:layout_marginTop="16dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <Button
+                        android:id="@+id/button_create_group"
+                        android:text="@string/group_create"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:textColor="@color/colorOnPrimary"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <Button
+                        android:id="@+id/button_delete_group"
+                        android:text="@string/group_delete"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:textColor="@color/colorOnPrimary"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
+
+        <com.google.android.material.navigation.NavigationView
+            android:background="@color/white"
+            app:itemTextColor="@color/nav_menu_text"
+            app:itemIconTint="@color/nav_menu_icon"
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            app:menu="@menu/drawer_menu"
+            app:headerLayout="@layout/nav_header"/>
+    </androidx.drawerlayout.widget.DrawerLayout>
+
+    <FrameLayout
+        android:id="@+id/loadingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/overlay_shadow"
+        android:visibility="gone"
+        android:clickable="true">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+</FrameLayout>

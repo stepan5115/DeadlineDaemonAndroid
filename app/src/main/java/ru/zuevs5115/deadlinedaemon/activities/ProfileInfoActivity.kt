@@ -62,6 +62,11 @@ class ProfileInfoActivity : AppCompatActivity(), LoadingOverlayHandler {
                     startActivity(Intent(this, AssignmentsActivity::class.java))
                     finish()
                 }
+                R.id.nav_management -> {
+                    //start activity management and finish itself
+                    startActivity(Intent(this, ManagementActivity::class.java))
+                    finish()
+                }
                 R.id.nav_settings -> {
                     //start activity settings and finish itself
                     startActivity(Intent(this, SettingsActivity::class.java))
