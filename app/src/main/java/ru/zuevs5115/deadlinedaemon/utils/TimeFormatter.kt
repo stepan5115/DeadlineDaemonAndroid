@@ -5,11 +5,15 @@ import android.util.Log
 import ru.zuevs5115.deadlinedaemon.R
 import java.text.SimpleDateFormat
 import java.time.Duration
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
 //just time formatter
 object TimeFormatter {
+    private val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+    private val spaceFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
     //convert interval to simple format
     fun formatNotificationInterval(seconds: Long, context: Context): String {
         val duration = Duration.ofSeconds(seconds)
@@ -26,31 +30,6 @@ object TimeFormatter {
                 append(context.getString(R.string.seconds_short_pc, secs.toString()))
         }.trim().ifEmpty { context.getString(R.string.seconds_short_pc, "0") }
     }
-    fun parseIntervalToSeconds(formattedString: String, context: Context): Long {
-        var seconds = 0L
-        val parts = formattedString.split(" ")
-
-        var i = 0
-        while (i < parts.size) {
-            val value = parts[i].toLongOrNull() ?: 0L
-            when {
-                i + 1 >= parts.size -> break
-                parts[i+1] == context.getString(R.string.days_short) -> seconds += value * 86400
-                parts[i+1] == context.getString(R.string.hours_short) -> seconds += value * 3600
-                parts[i+1] == context.getString(R.string.minutes_short) -> seconds += value * 60
-                parts[i+1] == context.getString(R.string.seconds_short) -> seconds += value
-            }
-            i += 2
-        }
-        return seconds
-    }
-    fun fastMaxPartOfInterval(formattedString: String, context: Context): Pair<Long, Int> {
-        val timeUnits = context.resources.getStringArray(R.array.time_units)
-        val parts = formattedString.split(" ")
-        Log.d("HAHAHHA", timeUnits.indexOf(parts[1]).toString())
-        Log.d("HAHAHHA", parts[1])
-        return (parts[0].toLongOrNull() ?: 0L) to timeUnits.indexOf(parts[1])
-    }
     //make date for last update status
     fun formatTimestamp(timestamp: Long): String {
         val format = SimpleDateFormat("dd MMM yyyy HH:mm:ss", Locale.getDefault())
@@ -66,5 +45,18 @@ object TimeFormatter {
             else -> seconds to timeUnits.indexOf("сек.")
         }
     }
-
+    fun fromStringToLocalDateTime(time: String?) : LocalDateTime? {
+        return try {
+            LocalDateTime.parse(time, formatter)
+        } catch (e: Throwable) {
+            null
+        }
+    }
+    fun fromStringSpaceToLocalDateTime(time: String?) : LocalDateTime? {
+        return try {
+            LocalDateTime.parse(time, spaceFormatter)
+        } catch (e: Throwable) {
+            null
+        }
+    }
 }

@@ -66,10 +66,10 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp">
             <Button
-                    android:id="@+id/btn_select_groups"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/choose_groups_simple"/>
+                android:id="@+id/btn_select_groups"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/choose_groups_simple"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Выбор дедлайна -->

@@ -7,7 +7,7 @@ import retrofit2.create
 //Class to request/response to server
 object ApiClient {
     //url for request/response
-    private final const val BASE_URL = "http://192.168.10.51:8080/api/"
+    private const val BASE_URL = "http://192.168.10.51:8080/api/"
 
     //initial retrofit
     private val retrofit: Retrofit by lazy {
@@ -52,4 +52,8 @@ object ApiClient {
         get() = retrofit.create(GetAllSubjectsIndependenceUserService::class.java)
     val getAllAssignmentsIndependenceUserService: GetAllAssignmentsIndependenceUserService
         get() = retrofit.create(GetAllAssignmentsIndependenceUserService::class.java)
+    val deleteAssignmentService: DeleteAssignmentService
+        get() = retrofit.create(DeleteAssignmentService::class.java)
+    val createAssignmentService: CreateAssignmentService
+        get() = retrofit.create(CreateAssignmentService::class.java)
 }

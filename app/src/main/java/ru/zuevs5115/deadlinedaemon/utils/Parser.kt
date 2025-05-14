@@ -7,6 +7,9 @@ import ru.zuevs5115.deadlinedaemon.entities.Assignment
 import ru.zuevs5115.deadlinedaemon.entities.Group
 import ru.zuevs5115.deadlinedaemon.entities.Subject
 import ru.zuevs5115.deadlinedaemon.entities.User
+import java.sql.Time
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 //parse information (for last response parsing)
 object Parser {
@@ -51,7 +54,7 @@ object Parser {
                     groups = assignmentJson.getJSONArray("groups").let { array ->
                         (0 until array.length()).mapTo(mutableSetOf()) { array.getString(it) }
                     },
-                    deadline = assignmentJson.getString("deadline"),
+                    deadline = TimeFormatter.fromStringToLocalDateTime(assignmentJson.getString("deadline"))!!,
                     subject = assignmentJson.getString("subject"),
                     lastNotificationTime = 0
                 ))
@@ -117,7 +120,7 @@ object Parser {
                     groups = assignmentJson.getJSONArray("groups").let { array ->
                         (0 until array.length()).mapTo(mutableSetOf()) { array.getString(it) }
                     },
-                    deadline = assignmentJson.getString("deadline"),
+                    deadline = TimeFormatter.fromStringToLocalDateTime(assignmentJson.getString("deadline"))!!,
                     subject = assignmentJson.getString("subject"),
                     lastNotificationTime = 0
                 ))
@@ -139,5 +142,11 @@ object Parser {
             }
         }
         return result
+    }
+    // Сериализация List<String> в JSON строку
+    fun groupNamesToJson(groupNames: List<String>): String {
+        return JSONArray().apply {
+            groupNames.forEach { put(it) }
+        }.toString()
     }
 }

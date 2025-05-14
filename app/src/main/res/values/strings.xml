@@ -68,7 +68,7 @@
     <string name="subject_create">Создать предмет</string>
     <string name="subject_delete">Удалить предмет</string>
     <string name="group_create">Создать группу</string>
-    <string name="group_delete">Удалить предмет</string>
+    <string name="group_delete">Удалить группу</string>
     <string name="enter_title">Введите название</string>
     <string name="title">Заголовок</string>
     <string name="description">Описание</string>
@@ -129,7 +129,7 @@
 
 
 
-
+    <string name="ok">ОК</string>
     <string name="choose_assignments">Выберите задания</string>
     <string name="choose_subjects">Выберите дисциплины</string>
     <string name="processing_pc">Обработка: %1$s</string>
