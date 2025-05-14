@@ -5,90 +5,101 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp">
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp">
-        <!-- Заголовок задания -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/et_assignment_title_layout"
+        android:fillViewport="true">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            app:errorEnabled="true">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_assignment_title"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
+            <!-- Заголовок задания -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_assignment_title_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/title"
-                android:inputType="textCapSentences"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginBottom="8dp"
+                app:errorEnabled="true">
 
-        <!-- Описание задания -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/et_assignment_description_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            app:errorEnabled="true">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_assignment_description"
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:gravity="top"
-                android:hint="@string/description"
-                android:inputType="textMultiLine|textCapSentences"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Выбор предмета -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/spinner_subject_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-            <AutoCompleteTextView
-                android:id="@+id/spinner_subject"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/choose_subject_manager"
-                android:inputType="none"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Выбор групп (множественный выбор) -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/groups_selection_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
-            <Button
-                    android:id="@+id/btn_select_groups"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_assignment_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/choose_groups_simple"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                    android:hint="@string/title"
+                    android:inputType="textCapSentences"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Выбор дедлайна -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/et_deadline_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_deadline"
+            <!-- Описание задания -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_assignment_description_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/deadline"
-                android:focusable="false"
-                android:clickable="true"
-                android:inputType="none"/>
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
+                android:layout_marginBottom="8dp"
+                app:errorEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_assignment_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:gravity="top"
+                    android:hint="@string/description"
+                    android:inputType="textMultiLine|textCapSentences"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Выбор предмета -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/spinner_subject_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                <AutoCompleteTextView
+                    android:id="@+id/spinner_subject"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/choose_subject_manager"
+                    android:inputType="none"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Выбор групп (множественный выбор) -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/groups_selection_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp">
+                <Button
+                        android:id="@+id/btn_select_groups"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/choose_groups_simple"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Выбор дедлайна -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_deadline_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_deadline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/deadline"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:inputType="none"/>
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_clear_filters"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Очистить дату"
+                android:layout_marginTop="16dp"/>
+        </LinearLayout>
+    </ScrollView>
     <FrameLayout
         android:id="@+id/dialogLoadingOverlay"
         android:layout_width="match_parent"

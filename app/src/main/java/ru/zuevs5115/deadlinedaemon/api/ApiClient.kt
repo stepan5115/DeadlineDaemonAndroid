@@ -56,4 +56,18 @@ object ApiClient {
         get() = retrofit.create(DeleteAssignmentService::class.java)
     val createAssignmentService: CreateAssignmentService
         get() = retrofit.create(CreateAssignmentService::class.java)
+    val generateTokenService: GenerateTokenService
+        get() = retrofit.create(GenerateTokenService::class.java)
+    val getTokensService: GetTokensService
+        get() = retrofit.create(GetTokensService::class.java)
+    val deleteTokenService: DeleteTokenService
+        get() = retrofit.create(DeleteTokenService::class.java)
+    val createSubjectService: CreateSubjectService
+        get() = retrofit.create(CreateSubjectService::class.java)
+    val deleteSubjectService: DeleteSubjectService
+        get() = retrofit.create(DeleteSubjectService::class.java)
+    val createGroupService: CreateGroupService
+        get() = retrofit.create(CreateGroupService::class.java)
+    val deleteGroupService: DeleteGroupService
+        get() = retrofit.create(DeleteGroupService::class.java)
 }

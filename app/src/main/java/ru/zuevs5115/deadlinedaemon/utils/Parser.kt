@@ -3,6 +3,7 @@ package ru.zuevs5115.deadlinedaemon.utils
 import android.util.Log
 import org.json.JSONArray
 import org.json.JSONObject
+import ru.zuevs5115.deadlinedaemon.entities.AdminToken
 import ru.zuevs5115.deadlinedaemon.entities.Assignment
 import ru.zuevs5115.deadlinedaemon.entities.Group
 import ru.zuevs5115.deadlinedaemon.entities.Subject
@@ -142,6 +143,33 @@ object Parser {
             }
         }
         return result
+    }
+    fun getAdminTokens(jsonString: String): Set<AdminToken> {
+        val json = JSONObject(jsonString)
+        val result : MutableSet<AdminToken> = HashSet()
+        if (json.has("tokens")) {
+            val jsonArray : JSONArray = json.getJSONArray("tokens")
+            for (i in 0 until jsonArray.length()) {
+                val subjectJson = jsonArray.getJSONObject(i)
+                result.add(
+                    AdminToken(
+                    id = subjectJson.getLong("token_id"),
+                    token = subjectJson.getString("token")
+                    )
+                )
+            }
+        }
+        return result
+    }
+    fun isHaveAdminRight(jsonString: String?): Boolean {
+        if (jsonString == null)
+            return false
+        try {
+            val user = fromJsonToUser(jsonString)
+            return user.canEditTasks
+        } catch (e: Throwable) {
+            return false
+        }
     }
     // Сериализация List<String> в JSON строку
     fun groupNamesToJson(groupNames: List<String>): String {

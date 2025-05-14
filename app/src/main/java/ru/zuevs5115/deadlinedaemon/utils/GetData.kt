@@ -23,6 +23,7 @@ object GetData {
     private val getAllAssignmentsIndependenceUserService = ApiClient.getAllAssignmentsIndependenceUserService
     private val getAllSubjectsIndependenceUserService = ApiClient.getAllSubjectsIndependenceUserService
     private val getAllGroupsIndependenceUserService = ApiClient.getAllGroupsIndependenceUserService
+    private val getTokensService = ApiClient.getTokensService
 
     fun getAllGroupsIndependenceUserForAssignmentContext(activity: Context, listeners: List<(MutableList<Group>) -> Unit>,
                                      selectedGroups: MutableList<Group>,
@@ -210,5 +211,60 @@ object GetData {
                 }
             }
         }
+    }
+
+    fun getTokens(activity: Context, listeners: List<() -> Unit>) {
+        if (Parser.isHaveAdminRight(SharedPrefs(activity).getInfo())) {
+            val context = activity.applicationContext
+            val (savedUser, savedPass) = SharedPrefs(context).getCredentials()
+            if (savedUser != null && savedPass != null) {
+                //show loading if allow
+                if (activity is LoadingOverlayHandler) activity.showLoadingOverlay()
+                //coroutine for async
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        //request
+                        val response = getTokensService.getTokens(savedUser, savedPass)
+                        //set to amin thread to make Toasts
+                        withContext(Dispatchers.Main) {
+                            //hide loading if allow
+                            if (activity is LoadingOverlayHandler) activity.hideLoadingOverlay()
+                            //success
+                            if (response.isSuccessful) {
+                                //set lastUpdate and info
+                                val responseText = response.body()?.message ?: ""
+                                SharedPrefs(context).saveTokens(responseText)
+                                //toast about success
+                                //Toast.makeText(context, context.getString(R.string.success_update), Toast.LENGTH_SHORT).show()
+                                //do what user want
+                                listeners.forEach { it() }
+                            } else {
+                                //make toast about error
+                                val errorMessage = ErrorHandler.handleError(response)
+                                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                                activity.startActivity(Intent(activity, LoginActivity::class.java))
+                            }
+                        }
+                    } catch (e: Exception) {
+                        //set to amin thread to make Toasts
+                        withContext(Dispatchers.Main) {
+                            //hide loading if allow
+                            if (activity is LoadingOverlayHandler) activity.hideLoadingOverlay()
+                            //make toast about error
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.network_error_ph, ""),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                }
+            }
+        } else
+            Toast.makeText(
+                activity,
+                activity.getString(R.string.have_not_rights),
+                Toast.LENGTH_SHORT
+            ).show()
     }
 }

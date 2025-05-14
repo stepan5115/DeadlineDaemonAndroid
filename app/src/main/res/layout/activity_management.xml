@@ -78,6 +78,14 @@
                         android:layout_marginTop="8dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
+                    <Button
+                        android:id="@+id/button_get_tokens"
+                        android:text="@string/get_tokens"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:textColor="@color/colorOnPrimary"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
 
                     <!-- Subjects Section -->
                     <TextView

@@ -65,6 +65,7 @@
     <string name="assignment_create">Создать задание</string>
     <string name="assignment_delete">Удалить задание</string>
     <string name="generate_token">Сгенерировать токен</string>
+    <string name="get_tokens">Осмотреть токены</string>
     <string name="subject_create">Создать предмет</string>
     <string name="subject_delete">Удалить предмет</string>
     <string name="group_create">Создать группу</string>
@@ -95,7 +96,7 @@
 
 
     <string name="not_specified">Не задан</string>
-
+    <string name="have_not_rights">У вас не хватает прав для этой операции</string>
 
     <string name="groups_field_ph">Группы: %1$s</string>
 
@@ -107,6 +108,7 @@
     <string name="actions">Действия</string>
     <string name="update_data">Обновить данные</string>
     <string name="add_assignment">Добавить задание</string>
+    <string name="filter">Фильтровать</string>
     <string name="update">Обновить</string>
     <string name="exit">Выйти</string>
     <string name="auto_update_notification">Профиль автоматически обновлен</string>

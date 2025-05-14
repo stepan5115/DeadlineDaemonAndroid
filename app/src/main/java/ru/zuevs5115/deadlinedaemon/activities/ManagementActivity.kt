@@ -8,12 +8,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import ru.zuevs5115.deadlinedaemon.R
+import ru.zuevs5115.deadlinedaemon.adapters.SubjectAdapter
+import ru.zuevs5115.deadlinedaemon.adapters.TokenAdapter
 import ru.zuevs5115.deadlinedaemon.databinding.ActivityManagementBinding
 import ru.zuevs5115.deadlinedaemon.databinding.DialogCreateAssignmentBinding
 import ru.zuevs5115.deadlinedaemon.databinding.DialogDeleteAssignmentBinding
@@ -37,6 +43,7 @@ import java.util.Locale
 class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
     private lateinit var binding: ActivityManagementBinding
     private val FORMATER = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+    private var clearSubjects: Subject = Subject(-1, "\uD83D\uDEABНе выбрано")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +63,7 @@ class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
         binding.buttonDeleteSubject.setOnClickListener { GetData.getAllSubjectsIndependenceUser(this, listOf(this::showDeleteSubjectDialog)) }
         binding.buttonCreateGroup.setOnClickListener { showCreateGroupDialog() }
         binding.buttonDeleteGroup.setOnClickListener { GetData.getAllGroupsIndependenceUserFor(this, listOf(this::showDeleteGroupDialog)) }
+        binding.buttonGetTokens.setOnClickListener { GetData.getTokens(this, listOf(this::showGetTokensDialog)) }
     }
 
     private fun showDeleteAssignmentFilterDialog() {
@@ -67,7 +75,8 @@ class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
             Toast.makeText(this, "Нету заданий в системе", Toast.LENGTH_SHORT).show()
             return
         }
-        val subjects = Parser.fromJsonToSubjects(SharedPrefs(this).getAllSubjects()!!)
+        val subjects = Parser.fromJsonToSubjects(SharedPrefs(this).getAllSubjects()!!).toMutableList()
+        subjects.add(clearSubjects)
         val selectedGroups: MutableList<Group> = mutableListOf()
         // Настройка Spinner для предметов
         val subjectAdapter = ArrayAdapter(
@@ -76,6 +85,12 @@ class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
             subjects.map { it.name }
         )
         dialogBinding.spinnerSubject.setAdapter(subjectAdapter)
+        dialogBinding.spinnerSubject.setText(clearSubjects.name, false)
+
+        val btnClearFilters: MaterialButton = dialogBinding.btnClearFilters
+        btnClearFilters.setOnClickListener {
+            dialogBinding.etDeadline.text?.clear()
+        }
 
         // Настройка выбора групп
         dialogBinding.btnSelectGroups.setOnClickListener {
@@ -94,7 +109,9 @@ class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
             .setPositiveButton("применить") { _, _ ->
                 val title = dialogBinding.etAssignmentTitle.text.toString()
                 val description = dialogBinding.etAssignmentDescription.text.toString()
-                val subject = subjects.find { it.name == dialogBinding.spinnerSubject.text.toString() }
+                var subject = subjects.find { it.name == dialogBinding.spinnerSubject.text.toString() }
+                if (subject == clearSubjects)
+                    subject = null
                 val deadline = TimeFormatter.fromStringSpaceToLocalDateTime(dialogBinding.etDeadline.text.toString())
                 GetData.getAllAssignmentsIndependenceUserDeleteContext(this,
                     listOf(this::showDeleteAssignmentDialog),
@@ -102,6 +119,61 @@ class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
             }
             .create()
             .show()
+    }
+
+    private fun showGetTokensDialog() {
+        val rawTokens = SharedPrefs(this).getTokens()
+        if (rawTokens == null) {
+            Toast.makeText(this, "Токенов не найдено", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val tokens = Parser.getAdminTokens(rawTokens).toMutableList()
+        if (tokens.isEmpty()) {
+            Toast.makeText(this, "У вас нет токенов", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val adapter = TokenAdapter(tokens) { token ->
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("token", token.token)
+            clipboard.setPrimaryClip(clip)
+            Toast.makeText(this, "Токен скопирован: ${token.token}", Toast.LENGTH_SHORT).show()
+        }
+
+        val recyclerView = RecyclerView(this).apply {
+            layoutManager = LinearLayoutManager(this@ManagementActivity)
+            this.adapter = adapter
+        }
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Ваши токены")
+            .setView(recyclerView)
+            .setNegativeButton("Закрыть", null)
+            .create()
+
+        adapter.setOnItemLongClickListener { token ->
+            AlertDialog.Builder(this)
+                .setTitle("Удалить токен?")
+                .setMessage("Вы уверены, что хотите удалить этот токен?\n${token.token}")
+                .setPositiveButton("Удалить") { _, _ ->
+                    tokens.remove(token)
+                    adapter.updateData(tokens)
+
+                    // Обновление SharedPrefs
+                    EditData.deleteToken(this, listOf {
+                        Toast.makeText(this, "Токен удален: ${token.token}", Toast.LENGTH_SHORT).show()
+                    }, token.id.toString())
+
+                    // Закрытие основного диалога
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Отмена", null)
+                .show()
+            true
+        }
+
+        dialog.show()
     }
 
     private fun showDeleteAssignmentDialog(title: String?, description: String?, subject: Subject?, groups: List<Group>,
@@ -142,7 +214,7 @@ class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
     }
 
     private fun generateToken() {
-        showTokenDialog("kowqwrlq")
+        EditData.generateTokenService(this, listOf(this::showTokenDialog))
     }
 
     private fun showCreateSubjectDialog() {
@@ -154,7 +226,9 @@ class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
             .setView(dialogBinding.root)
             .setPositiveButton("Создать") { _, _ ->
                 val name = dialogBinding.etInput.text.toString()
-                createSubject(name)
+                EditData.createSubject(this, listOf {
+                    Toast.makeText(this, "ОК", Toast.LENGTH_SHORT).show()
+                }, name)
             }
             .setNegativeButton("Отмена", null)
             .show()
@@ -201,7 +275,7 @@ class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
         MaterialAlertDialogBuilder(this)
             .setTitle("Удаление группы")
             .setItems(groupNames) { _, which ->
-                deleteSubject(groups[which].id.toString())
+                deleteGroup(groups[which].id.toString())
             }
             .setNegativeButton("Отмена", null)
             .show()
@@ -246,14 +320,23 @@ class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
 
     private fun deleteSubject(subjectId: String) {
         // Реализация удаления предмета
+        EditData.deleteSubject(this, listOf {
+            Toast.makeText(this, getString(R.string.ok), Toast.LENGTH_SHORT).show()
+        }, subjectId)
     }
 
     private fun createGroup(name: String) {
         // Реализация создания группы
+        EditData.createGroup(this, listOf {
+            Toast.makeText(this, getString(R.string.ok), Toast.LENGTH_SHORT).show()
+        }, name)
     }
 
     private fun deleteGroup(groupId: String) {
         // Реализация удаления группы
+        EditData.deleteGroup(this, listOf {
+            Toast.makeText(this, getString(R.string.ok), Toast.LENGTH_SHORT).show()
+        }, groupId)
     }
     private fun showCreateAssignmentDialog() {
         val dialogBinding = DialogCreateAssignmentBinding.inflate(LayoutInflater.from(this))

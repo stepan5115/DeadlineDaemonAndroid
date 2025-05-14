@@ -108,6 +108,15 @@ class SharedPrefs(context: Context) {
             apply()
         }
     }
+    fun saveTokens(tokens: String) {
+        prefs.edit().apply {
+            putString("tokens", tokens)
+            apply()
+        }
+    }
+    fun getTokens(): String? {
+        return prefs.getString("tokens", null)
+    }
     //clear allInformation (if you exit)
     fun clearInformation() {
         with(prefs.edit()) {
