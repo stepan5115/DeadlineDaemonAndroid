@@ -18,11 +18,9 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import ru.zuevs5115.deadlinedaemon.R
-import ru.zuevs5115.deadlinedaemon.adapters.SubjectAdapter
 import ru.zuevs5115.deadlinedaemon.adapters.TokenAdapter
 import ru.zuevs5115.deadlinedaemon.databinding.ActivityManagementBinding
-import ru.zuevs5115.deadlinedaemon.databinding.DialogCreateAssignmentBinding
-import ru.zuevs5115.deadlinedaemon.databinding.DialogDeleteAssignmentBinding
+import ru.zuevs5115.deadlinedaemon.databinding.DialogAssignmentBinding
 import ru.zuevs5115.deadlinedaemon.databinding.DialogSimpleInputBinding
 import ru.zuevs5115.deadlinedaemon.databinding.DialogTokenBinding
 import ru.zuevs5115.deadlinedaemon.entities.Group
@@ -36,24 +34,27 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 
 class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
+    //create binding for set up
     private lateinit var binding: ActivityManagementBinding
-    private val FORMATER = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-    private var clearSubjects: Subject = Subject(-1, "\uD83D\uDEABНе выбрано")
+    //format for work with date
+    private val format = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+    //subject that mean no filter by subject
+    private lateinit var clearSubjects: Subject
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityManagementBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        //setUp clear subject
+        clearSubjects = Subject(-1, getString(R.string.not_selected))
         setupButtons()
     }
 
     private fun setupButtons() {
+        //setUp buttons
         binding.buttonCreateAssignment.setOnClickListener { GetData.getAllSubjectsIndependenceUser(this,
             listOf(this::showCreateAssignmentDialog)) }
         binding.buttonDeleteAssignment.setOnClickListener { GetData.getAllSubjectsIndependenceUser(this,
@@ -65,54 +66,53 @@ class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
         binding.buttonDeleteGroup.setOnClickListener { GetData.getAllGroupsIndependenceUserFor(this, listOf(this::showDeleteGroupDialog)) }
         binding.buttonGetTokens.setOnClickListener { GetData.getTokens(this, listOf(this::showGetTokensDialog)) }
     }
-
+    //delete assignments dialog
     private fun showDeleteAssignmentFilterDialog() {
-        val dialogBinding = DialogDeleteAssignmentBinding.inflate(LayoutInflater.from(this))
-
-        // Загрузка данных
+        //get dialog with assignment fields
+        val dialogBinding = DialogAssignmentBinding.inflate(LayoutInflater.from(this))
+        //try get subjects for choose and toast if have not subjects
         if (SharedPrefs(this).getAllSubjects() == null) {
-            //так как без предметов не может быть и заданий
-            Toast.makeText(this, "Нету заданий в системе", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.no_subjects_in_system), Toast.LENGTH_SHORT).show()
             return
         }
         val subjects = Parser.fromJsonToSubjects(SharedPrefs(this).getAllSubjects()!!).toMutableList()
+        //add subject that mean no choice
         subjects.add(clearSubjects)
-        val selectedGroups: MutableList<Group> = mutableListOf()
-        // Настройка Spinner для предметов
         val subjectAdapter = ArrayAdapter(
             this,
             android.R.layout.simple_dropdown_item_1line,
             subjects.map { it.name }
         )
         dialogBinding.spinnerSubject.setAdapter(subjectAdapter)
+        //set subject filter on no choice
         dialogBinding.spinnerSubject.setText(clearSubjects.name, false)
-
+        //set up clear filter button (specially for delete assignments)
         val btnClearFilters: MaterialButton = dialogBinding.btnClearFilters
         btnClearFilters.setOnClickListener {
             dialogBinding.etDeadline.text?.clear()
         }
-
-        // Настройка выбора групп
+        //set up group selection
+        val selectedGroups: MutableList<Group> = mutableListOf()
         dialogBinding.btnSelectGroups.setOnClickListener {
             GetData.getAllGroupsIndependenceUserForAssignmentContext(this, listOf(this::showGroupSelectionDialog), selectedGroups, dialogBinding)
         }
-
-        // Настройка DatePicker для дедлайна
+        //set up choose deadline
         dialogBinding.etDeadline.setOnClickListener {
             showDatePickerDialog(dialogBinding)
         }
-
+        //create final dialog
         MaterialAlertDialogBuilder(this)
-            .setTitle("Настройка фильтров")
+            .setTitle(getString(R.string.filters_settings))
             .setView(dialogBinding.root)
-            .setNegativeButton("Отмена", null)
-            .setPositiveButton("применить") { _, _ ->
+            .setNegativeButton(getString(R.string.cancel), null)
+            .setPositiveButton(getString(R.string.apply)) { _, _ ->
                 val title = dialogBinding.etAssignmentTitle.text.toString()
                 val description = dialogBinding.etAssignmentDescription.text.toString()
                 var subject = subjects.find { it.name == dialogBinding.spinnerSubject.text.toString() }
                 if (subject == clearSubjects)
                     subject = null
                 val deadline = TimeFormatter.fromStringSpaceToLocalDateTime(dialogBinding.etDeadline.text.toString())
+                //set assignments list accord filters
                 GetData.getAllAssignmentsIndependenceUserDeleteContext(this,
                     listOf(this::showDeleteAssignmentDialog),
                     title, description, subject, selectedGroups, deadline)
@@ -120,68 +120,84 @@ class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
             .create()
             .show()
     }
+    //get date and time picker dialog
+    private fun showDatePickerDialog(dialogBinding: ViewBinding) {
+        //date picker
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText(getString(R.string.choose_deadline))
+            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+            .build()
 
-    private fun showGetTokensDialog() {
-        val rawTokens = SharedPrefs(this).getTokens()
-        if (rawTokens == null) {
-            Toast.makeText(this, "Токенов не найдено", Toast.LENGTH_SHORT).show()
-            return
+        datePicker.addOnPositiveButtonClickListener { selectedDateMillis ->
+            val calendar = java.util.Calendar.getInstance().apply {
+                timeInMillis = selectedDateMillis
+            }
+            val hour = calendar.get(java.util.Calendar.HOUR_OF_DAY)
+            val minute = calendar.get(java.util.Calendar.MINUTE)
+            //time picker
+            val timePicker = android.app.TimePickerDialog(
+                this,
+                { _, selectedHour, selectedMinute ->
+                    calendar.set(java.util.Calendar.HOUR_OF_DAY, selectedHour)
+                    calendar.set(java.util.Calendar.MINUTE, selectedMinute)
+                    //set filter
+                    if (dialogBinding is DialogAssignmentBinding)
+                        dialogBinding.etDeadline.setText(format.format(calendar.time))
+                },
+                hour,
+                minute,
+                true //24-hour format
+            )
+            timePicker.setTitle(getString(R.string.choose_deadline_time))
+            timePicker.show()
         }
-
-        val tokens = Parser.getAdminTokens(rawTokens).toMutableList()
-        if (tokens.isEmpty()) {
-            Toast.makeText(this, "У вас нет токенов", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val adapter = TokenAdapter(tokens) { token ->
-            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("token", token.token)
-            clipboard.setPrimaryClip(clip)
-            Toast.makeText(this, "Токен скопирован: ${token.token}", Toast.LENGTH_SHORT).show()
-        }
-
-        val recyclerView = RecyclerView(this).apply {
-            layoutManager = LinearLayoutManager(this@ManagementActivity)
-            this.adapter = adapter
-        }
-
-        val dialog = AlertDialog.Builder(this)
-            .setTitle("Ваши токены")
-            .setView(recyclerView)
-            .setNegativeButton("Закрыть", null)
-            .create()
-
-        adapter.setOnItemLongClickListener { token ->
-            AlertDialog.Builder(this)
-                .setTitle("Удалить токен?")
-                .setMessage("Вы уверены, что хотите удалить этот токен?\n${token.token}")
-                .setPositiveButton("Удалить") { _, _ ->
-                    tokens.remove(token)
-                    adapter.updateData(tokens)
-
-                    // Обновление SharedPrefs
-                    EditData.deleteToken(this, listOf {
-                        Toast.makeText(this, "Токен удален: ${token.token}", Toast.LENGTH_SHORT).show()
-                    }, token.id.toString())
-
-                    // Закрытие основного диалога
-                    dialog.dismiss()
-                }
-                .setNegativeButton("Отмена", null)
-                .show()
-            true
-        }
-
-        dialog.show()
+        //show final dialog
+        datePicker.show(supportFragmentManager, "DATE_PICKER")
     }
+    //show select group dialog
+    private fun showGroupSelectionDialog(
+        selectedGroups: MutableList<Group>
+    ) {
+        //try get groups information
+        if (SharedPrefs(this).getAllGroups() == null) {
+            Toast.makeText(this, getString(R.string.no_groups_in_system), Toast.LENGTH_SHORT).show()
+            return
+        }
+        try {
+            val groups = Parser.fromJsonToGroups(SharedPrefs(this).getAllGroups()!!).toList()
+            val groupNames = groups.map { it.name }.toTypedArray()
+            val checkedItems = groups.map { group ->
+                selectedGroups.any { it.id == group.id }
+            }.toBooleanArray()
 
+            //create dialog
+            MaterialAlertDialogBuilder(this)
+                .setTitle(getString(R.string.choose_groups_filter))
+                .setMultiChoiceItems(groupNames, checkedItems) { _, which, isChecked ->
+                    val selectedGroup = groups[which]
+                    if (isChecked) {
+                        if (!selectedGroups.contains(selectedGroup)) {
+                            selectedGroups.add(selectedGroup)
+                        }
+                    } else {
+                        selectedGroups.removeAll { it.id == selectedGroup.id }
+                    }
+                }
+                .setPositiveButton(getString(R.string.apply)) { _, _ -> }
+                .show()
+        } catch (e: Throwable) {
+            Toast.makeText(this, getString(R.string.error_while_form_list), Toast.LENGTH_SHORT).show()
+        }
+    }
+    //show a dialog with filtered assignments
     private fun showDeleteAssignmentDialog(title: String?, description: String?, subject: Subject?, groups: List<Group>,
                                            deadline: LocalDateTime?) {
+        //try get all system assignments
         if (SharedPrefs(this).getAllAssignments() == null) {
-            Toast.makeText(this, "Нету заданий в системе", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.no_assignments_in_system), Toast.LENGTH_SHORT).show()
             return
         }
+        //try apply filter
         try {
             val groupsName = groups.map { it.name }
             var assignments = Parser.fromJsonToAssignments(SharedPrefs(this).getAllAssignments()!!).toList()
@@ -196,183 +212,60 @@ class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
             if (deadline != null)
                 assignments = assignments.filter { it.deadline.isBefore(deadline) }
             if (assignments.isEmpty()) {
-                Toast.makeText(this, "Нету подходящих по фильтру заданий", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.have_no_filtering_assignments), Toast.LENGTH_SHORT).show()
                 return
             }
             val assignmentTitles = assignments.map { it.title }.toTypedArray()
+            //show dialog for deleting
             MaterialAlertDialogBuilder(this)
-                .setTitle("Удаление задания")
+                .setTitle(getString(R.string.deleting_assignments))
                 .setItems(assignmentTitles) { _, which ->
                     deleteAssignment(assignments[which].id.toString())
                 }
-                .setNegativeButton("Отмена", null)
+                .setNegativeButton(getString(R.string.cancel), null)
                 .show()
         }
         catch (e: Throwable) {
-            Toast.makeText(this, "Ошибка при формировании списка заданий", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,  getString(R.string.error_forming_assignments), Toast.LENGTH_SHORT).show()
         }
     }
-
-    private fun generateToken() {
-        EditData.generateTokenService(this, listOf(this::showTokenDialog))
-    }
-
-    private fun showCreateSubjectDialog() {
-        val dialogBinding = DialogSimpleInputBinding.inflate(LayoutInflater.from(this))
-        dialogBinding.etInput.hint = "Введите название предмета"
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Создание предмета")
-            .setView(dialogBinding.root)
-            .setPositiveButton("Создать") { _, _ ->
-                val name = dialogBinding.etInput.text.toString()
-                EditData.createSubject(this, listOf {
-                    Toast.makeText(this, "ОК", Toast.LENGTH_SHORT).show()
-                }, name)
-            }
-            .setNegativeButton("Отмена", null)
-            .show()
-    }
-
-    private fun showDeleteSubjectDialog() {
-        if (SharedPrefs(this).getAllSubjects() == null) {
-            Toast.makeText(this, "В системе нету предметов", Toast.LENGTH_SHORT).show()
-            return
-        }
-        val subjects = Parser.fromJsonToSubjects(SharedPrefs(this).getAllSubjects()!!).toList()
-        val subjectNames = subjects.map { it.name }.toTypedArray()
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Удаление предмета")
-            .setItems(subjectNames) { _, which ->
-                deleteSubject(subjects[which].id.toString())
-            }
-            .setNegativeButton("Отмена", null)
-            .show()
-    }
-
-    private fun showCreateGroupDialog() {
-        val dialogBinding = DialogSimpleInputBinding.inflate(LayoutInflater.from(this))
-        dialogBinding.etInput.hint = "Введите название группы"
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Создание группы")
-            .setView(dialogBinding.root)
-            .setPositiveButton("Создать") { _, _ ->
-                val name = dialogBinding.etInput.text.toString()
-                createGroup(name)
-            }
-            .setNegativeButton("Отмена", null)
-            .show()
-    }
-
-    private fun showDeleteGroupDialog() {
-        if (SharedPrefs(this).getAllGroups() == null) {
-            Toast.makeText(this, "В системе нету групп", Toast.LENGTH_SHORT).show()
-            return
-        }
-        val groups = Parser.fromJsonToGroups(SharedPrefs(this).getAllGroups()!!).toList()
-        val groupNames = groups.map { it.name }.toTypedArray()
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Удаление группы")
-            .setItems(groupNames) { _, which ->
-                deleteGroup(groups[which].id.toString())
-            }
-            .setNegativeButton("Отмена", null)
-            .show()
-    }
-
-    private fun showTokenDialog(token: String) {
-        val dialogBinding = DialogTokenBinding.inflate(LayoutInflater.from(this))
-        dialogBinding.tvToken.text = token
-
-        dialogBinding.tvToken.setOnClickListener {
-            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("Token", token)
-            clipboard.setPrimaryClip(clip)
-            Toast.makeText(this, "Токен скопирован", Toast.LENGTH_SHORT).show()
-        }
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Токен создан:")
-            .setView(dialogBinding.root)
-            .setPositiveButton("OK", null)
-            .show()
-    }
-
-    // Сигнатуры функций для вашей реализации
-    private fun createAssignment(title: String, description: String, groupNames: List<String>, deadline: String, subject: Subject) {
-        // Реализация создания задания
-        EditData.createAssignmentService(this, listOf {
-            Toast.makeText(this, getString(R.string.ok), Toast.LENGTH_SHORT).show()
-        }, title, description, Parser.groupNamesToJson(groupNames), deadline, subject.id.toString())
-    }
-
-    private fun deleteAssignment(assignmentId: String) {
-        // Реализация удаления задания
-        EditData.deleteAssignmentService(this, listOf {
-            Toast.makeText(this, getString(R.string.ok), Toast.LENGTH_SHORT).show()
-        }, assignmentId)
-    }
-
-    private fun createSubject(name: String) {
-        // Реализация создания предмета
-    }
-
-    private fun deleteSubject(subjectId: String) {
-        // Реализация удаления предмета
-        EditData.deleteSubject(this, listOf {
-            Toast.makeText(this, getString(R.string.ok), Toast.LENGTH_SHORT).show()
-        }, subjectId)
-    }
-
-    private fun createGroup(name: String) {
-        // Реализация создания группы
-        EditData.createGroup(this, listOf {
-            Toast.makeText(this, getString(R.string.ok), Toast.LENGTH_SHORT).show()
-        }, name)
-    }
-
-    private fun deleteGroup(groupId: String) {
-        // Реализация удаления группы
-        EditData.deleteGroup(this, listOf {
-            Toast.makeText(this, getString(R.string.ok), Toast.LENGTH_SHORT).show()
-        }, groupId)
-    }
+    //show create assignment dialog
     private fun showCreateAssignmentDialog() {
-        val dialogBinding = DialogCreateAssignmentBinding.inflate(LayoutInflater.from(this))
-
-        // Загрузка данных
+        //get dialog for assignment fields
+        val dialogBinding = DialogAssignmentBinding.inflate(LayoutInflater.from(this))
+        //try load subjects
         if (SharedPrefs(this).getAllSubjects() == null) {
-            Toast.makeText(this, "Нету предметов в системе", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.no_subjects_in_system), Toast.LENGTH_SHORT).show()
             return
         }
         val subjects = Parser.fromJsonToSubjects(SharedPrefs(this).getAllSubjects()!!)
-        val selectedGroups: MutableList<Group> = mutableListOf()
-        // Настройка Spinner для предметов
         val subjectAdapter = ArrayAdapter(
             this,
             android.R.layout.simple_dropdown_item_1line,
             subjects.map { it.name }
         )
         dialogBinding.spinnerSubject.setAdapter(subjectAdapter)
-
-        // Настройка выбора групп
+        //hide clear date button (no need)
+        dialogBinding.btnClearFilters.visibility = View.GONE
+        //set up groups part
+        val selectedGroups: MutableList<Group> = mutableListOf()
         dialogBinding.btnSelectGroups.setOnClickListener {
             GetData.getAllGroupsIndependenceUserForAssignmentContext(this, listOf(this::showGroupSelectionDialog), selectedGroups, dialogBinding)
         }
-
-        // Настройка DatePicker для дедлайна
+        //set up deadline part
         dialogBinding.etDeadline.setOnClickListener {
             showDatePickerDialog(dialogBinding)
         }
-
+        //create and set up dialog for create assignment
+        //instead of configuring the setPositiveButton button, we make a
+        // custom button so that if the validation fails, the dialog does not close.
         val dialog = MaterialAlertDialogBuilder(this)
-            .setTitle("Создание задания")
+            .setTitle(getString(R.string.create_assignment))
             .setView(dialogBinding.root)
-            .setNegativeButton("Отмена", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .create()
         dialog.setOnShowListener {
-            val positiveButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
+            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setOnClickListener {
                 val title = dialogBinding.etAssignmentTitle.text.toString()
                 val description = dialogBinding.etAssignmentDescription.text.toString()
@@ -385,143 +278,236 @@ class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
                 }
             }
         }
+        //add the "Create" button after creation so that it is available in setOnShowListener
+        dialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.create)) { _, _ -> /* catch */ }
+        dialog.show()
+    }
+    //dialog to get tokens
+    private fun showGetTokensDialog() {
+        val rawTokens = SharedPrefs(this).getTokens()
+        if (rawTokens == null) {
+            Toast.makeText(this, getString(R.string.not_find_tokens), Toast.LENGTH_SHORT).show()
+            return
+        }
+        val tokens = Parser.getAdminTokens(rawTokens).toMutableList()
+        if (tokens.isEmpty()) {
+            Toast.makeText(this, getString(R.string.you_have_no_tokens), Toast.LENGTH_SHORT).show()
+            return
+        }
 
-// Добавляем кнопку "Создать" после создания, чтобы она была доступна в setOnShowListener
-        dialog.setButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE, "Создать") { _, _ -> /* перехватываем */ }
+        val adapter = TokenAdapter(tokens) { token ->
+            //set up copy to buffer
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("token", token.token)
+            clipboard.setPrimaryClip(clip)
+            //toast about copy
+            Toast.makeText(this, getString(R.string.copy_token, token.token), Toast.LENGTH_SHORT).show()
+        }
+
+        val recyclerView = RecyclerView(this).apply {
+            layoutManager = LinearLayoutManager(this@ManagementActivity)
+            this.adapter = adapter
+        }
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle(getString(R.string.your_tokens))
+            .setView(recyclerView)
+            .setNegativeButton(getString(R.string.close), null)
+            .create()
+
+        adapter.setOnItemLongClickListener { token ->
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.sure_delete_token))
+                .setMessage(getString(R.string.absolutely_sure_delete_token, token.token))
+                .setPositiveButton(getString(R.string.delete)) { _, _ ->
+                    tokens.remove(token)
+                    adapter.updateData(tokens)
+                    EditData.deleteToken(this, listOf {
+                        Toast.makeText(this, getString(R.string.deleted_token, token.token), Toast.LENGTH_SHORT).show()
+                    }, token.id.toString())
+                    dialog.dismiss()
+                }
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show()
+            true
+        }
 
         dialog.show()
     }
+    //show create subject dialog
+    private fun showCreateSubjectDialog() {
+        val dialogBinding = DialogSimpleInputBinding.inflate(LayoutInflater.from(this))
+        dialogBinding.etInput.hint = getString(R.string.enter_subject_name)
 
-    private fun showGroupSelectionDialog(
-        selectedGroups: MutableList<Group>
-    ) {
-        if (SharedPrefs(this).getAllGroups() == null) {
-            Toast.makeText(this, "Нету групп в системе", Toast.LENGTH_SHORT).show()
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.create_subject))
+            .setView(dialogBinding.root)
+            .setPositiveButton(getString(R.string.create)) { _, _ ->
+                val name = dialogBinding.etInput.text.toString()
+                createSubject(name)
+            }
+            .setNegativeButton(getString(R.string.cancel), null)
+            .show()
+    }
+    //show delete subject dialog
+    private fun showDeleteSubjectDialog() {
+        if (SharedPrefs(this).getAllSubjects() == null) {
+            Toast.makeText(this, getString(R.string.no_subjects_in_system), Toast.LENGTH_SHORT).show()
             return
         }
-        try {
-            val groups = Parser.fromJsonToGroups(SharedPrefs(this).getAllGroups()!!).toList()
-            val groupNames = groups.map { it.name }.toTypedArray()
-            val checkedItems = groups.map { group ->
-                selectedGroups.any { it.id == group.id }
-            }.toBooleanArray()
-
-            MaterialAlertDialogBuilder(this)
-                .setTitle("Выберите группы")
-                .setMultiChoiceItems(groupNames, checkedItems) { _, which, isChecked ->
-                    val selectedGroup = groups[which]
-                    if (isChecked) {
-                        if (!selectedGroups.contains(selectedGroup)) {
-                            selectedGroups.add(selectedGroup)
-                        }
-                    } else {
-                        selectedGroups.removeAll { it.id == selectedGroup.id }
-                    }
-                }
-                .setPositiveButton("OK") { _, _ -> }
-                .show()
-        } catch (e: Throwable) {
-            Toast.makeText(this, "Ошибка при формировании списка групп", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun showDatePickerDialog(dialogBinding: ViewBinding) {
-        val datePicker = MaterialDatePicker.Builder.datePicker()
-            .setTitleText("Выберите дедлайн")
-            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-            .build()
-
-        datePicker.addOnPositiveButtonClickListener { selectedDateMillis ->
-            val calendar = java.util.Calendar.getInstance().apply {
-                timeInMillis = selectedDateMillis
+        val subjects = Parser.fromJsonToSubjects(SharedPrefs(this).getAllSubjects()!!).toList()
+        val subjectNames = subjects.map { it.name }.toTypedArray()
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.subject_delete))
+            .setItems(subjectNames) { _, which ->
+                deleteSubject(subjects[which].id.toString())
             }
+            .setNegativeButton(getString(R.string.cancel), null)
+            .show()
+    }
+    //show create group dialog
+    private fun showCreateGroupDialog() {
+        val dialogBinding = DialogSimpleInputBinding.inflate(LayoutInflater.from(this))
+        dialogBinding.etInput.hint = getString(R.string.enter_group_name)
 
-            // Показываем TimePicker после выбора даты
-            val hour = calendar.get(java.util.Calendar.HOUR_OF_DAY)
-            val minute = calendar.get(java.util.Calendar.MINUTE)
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.group_creation))
+            .setView(dialogBinding.root)
+            .setPositiveButton(getString(R.string.create)) { _, _ ->
+                val name = dialogBinding.etInput.text.toString()
+                createGroup(name)
+            }
+            .setNegativeButton(getString(R.string.cancel), null)
+            .show()
+    }
+    //show delete group dialog
+    private fun showDeleteGroupDialog() {
+        if (SharedPrefs(this).getAllGroups() == null) {
+            Toast.makeText(this, getString(R.string.no_groups_in_system), Toast.LENGTH_SHORT).show()
+            return
+        }
+        val groups = Parser.fromJsonToGroups(SharedPrefs(this).getAllGroups()!!).toList()
+        val groupNames = groups.map { it.name }.toTypedArray()
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.group_deletion))
+            .setItems(groupNames) { _, which ->
+                deleteGroup(groups[which].id.toString())
+            }
+            .setNegativeButton(getString(R.string.cancel), null)
+            .show()
+    }
+    //show token dialog after generate
+    private fun showTokenDialog(token: String) {
+        val dialogBinding = DialogTokenBinding.inflate(LayoutInflater.from(this))
+        dialogBinding.tvToken.text = token
 
-            val timePicker = android.app.TimePickerDialog(
-                this,
-                { _, selectedHour, selectedMinute ->
-                    calendar.set(java.util.Calendar.HOUR_OF_DAY, selectedHour)
-                    calendar.set(java.util.Calendar.MINUTE, selectedMinute)
-
-                    // Форматируем в строку
-                    if (dialogBinding is DialogCreateAssignmentBinding)
-                        dialogBinding.etDeadline.setText(FORMATER.format(calendar.time))
-                    if (dialogBinding is DialogDeleteAssignmentBinding)
-                        dialogBinding.etDeadline.setText(FORMATER.format(calendar.time))
-                },
-                hour,
-                minute,
-                true // 24-часовой формат
-            )
-            timePicker.setTitle("Выберите время дедлайна")
-            timePicker.show()
+        dialogBinding.tvToken.setOnClickListener {
+            //set up copy buffer
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("Token", token)
+            clipboard.setPrimaryClip(clip)
+            //toast about it
+            Toast.makeText(this, getString(R.string.copy_token_simple), Toast.LENGTH_SHORT).show()
         }
 
-        datePicker.show(supportFragmentManager, "DATE_PICKER")
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.token_created))
+            .setView(dialogBinding.root)
+            .setPositiveButton(getString(R.string.OK), null)
+            .show()
     }
-
+    //generate token request
+    private fun generateToken() {
+        EditData.generateTokenService(this, listOf(this::showTokenDialog))
+    }
+    //create assignment request
+    private fun createAssignment(title: String, description: String, groupNames: List<String>, deadline: String, subject: Subject) {
+        EditData.createAssignmentService(this, listOf {
+            Toast.makeText(this, getString(R.string.OK), Toast.LENGTH_SHORT).show()
+        }, title, description, Parser.groupNamesToJson(groupNames), deadline, subject.id.toString())
+    }
+    //delete assignment request
+    private fun deleteAssignment(assignmentId: String) {
+        EditData.deleteAssignmentService(this, listOf {
+            Toast.makeText(this, getString(R.string.OK), Toast.LENGTH_SHORT).show()
+        }, assignmentId)
+    }
+    //create subject request
+    private fun createSubject(name: String) {
+        EditData.createSubject(this, listOf {
+            Toast.makeText(this, getString(R.string.OK), Toast.LENGTH_SHORT).show()
+        }, name)
+    }
+    //create subject request
+    private fun deleteSubject(subjectId: String) {
+        EditData.deleteSubject(this, listOf {
+            Toast.makeText(this, getString(R.string.OK), Toast.LENGTH_SHORT).show()
+        }, subjectId)
+    }
+    //create group request
+    private fun createGroup(name: String) {
+        EditData.createGroup(this, listOf {
+            Toast.makeText(this, getString(R.string.OK), Toast.LENGTH_SHORT).show()
+        }, name)
+    }
+    //delete group request
+    private fun deleteGroup(groupId: String) {
+        EditData.deleteGroup(this, listOf {
+            Toast.makeText(this, getString(R.string.OK), Toast.LENGTH_SHORT).show()
+        }, groupId)
+    }
+    //check valid fields for creation dialog
     private fun validateAssignmentInput(
         title: String,
         description: String,
         subject: Subject?,
         deadline: String,
         selectedGroups: List<Group>,
-        dialogBinding: DialogCreateAssignmentBinding
+        dialogBinding: DialogAssignmentBinding
     ): Boolean {
-        // Сбрасываем все ошибки перед новой проверкой
         resetAllErrors(dialogBinding)
-
         var isValid = true
-
-        // Проверка заголовка
+        //Checking the title
         if (title.isBlank()) {
-            showError(dialogBinding.etAssignmentTitleLayout, "Введите название задания")
+            showError(dialogBinding.etAssignmentTitleLayout, getString(R.string.enter_title_assignment))
             isValid = false
         }
-
-        // Проверка описания
+        //Checking the description
         if (description.isBlank()) {
-            showError(dialogBinding.etAssignmentDescriptionLayout, "Введите описание задания")
+            showError(dialogBinding.etAssignmentDescriptionLayout, getString(R.string.enter_description_assignment))
             isValid = false
         }
-
-        // Проверка предмета
+        //Checking the subject
         if (subject == null) {
-            showError(dialogBinding.spinnerSubjectLayout, "Выберите предмет")
+            showError(dialogBinding.spinnerSubjectLayout, getString(R.string.choose_subject_assignment))
             isValid = false
         }
-
-        // Проверка дедлайна
+        //Checking the deadline
         if (deadline.isBlank()) {
-            showError(dialogBinding.etDeadlineLayout, "Укажите срок выполнения")
+            showError(dialogBinding.etDeadlineLayout, getString(R.string.enter_deadline_assignment))
             isValid = false
         } else {
             try {
                 val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
                 val deadlineDateTime = LocalDateTime.parse(deadline, formatter)
                 if (deadlineDateTime.isBefore(LocalDateTime.now())) {
-                    showError(dialogBinding.etDeadlineLayout, "Срок не может быть в прошлом")
+                    showError(dialogBinding.etDeadlineLayout, getString(R.string.past_deadline))
                     isValid = false
                 }
             } catch (e: DateTimeParseException) {
-                showError(dialogBinding.etDeadlineLayout, "Неверный формат даты")
+                showError(dialogBinding.etDeadlineLayout, getString(R.string.error_date_format))
                 isValid = false
             }
         }
-
-        // Проверка групп
+        //Checking the groups
         if (selectedGroups.isEmpty()) {
-            showError(dialogBinding.groupsSelectionLayout, "Выберите хотя бы одну группу")
+            showError(dialogBinding.groupsSelectionLayout, getString(R.string.choose_at_least_one_group))
             isValid = false
         }
-
         return isValid
     }
-
-    private fun resetAllErrors(binding: DialogCreateAssignmentBinding) {
+    //reset all mark about error in filter
+    private fun resetAllErrors(binding: DialogAssignmentBinding) {
         listOf(
             binding.etAssignmentTitleLayout,
             binding.etAssignmentDescriptionLayout,
@@ -529,11 +515,11 @@ class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
             binding.etDeadlineLayout,
             binding.groupsSelectionLayout
         ).forEach { layout ->
-            layout?.error = null
-            layout?.isErrorEnabled = false
+            layout.error = null
+            layout.isErrorEnabled = false
         }
     }
-
+    //function that mark error fields in filter
     private fun showError(layout: TextInputLayout?, message: String) {
         layout?.let {
             it.error = message

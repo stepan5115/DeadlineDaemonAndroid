@@ -1,62 +1,80 @@
 <resources>
-    <!-- Use in logIn/SignUp activities -->
+    <!-- Use in logIn activities -->
     <string name="login_image_description">Иконка входа</string>
     <string name="welcome_back">Добро пожаловать</string>
     <string name="login_to_continue">Войдите чтобы продолжить</string>
     <string name="login">Войти</string>
+    <string name="autofill">Автозаполнение</string>
+    <string name="have_not_saved">Сохранённых данных нет</string>
+    <string name="choose_user">Выберите пользователя</string>
+    <string name="delete_entry">Удалить комбинацию</string>
+    <string name="delete_confirmation">Вы уверены что хотите удалить информацию пользователя "%1$s"</string>
+    <string name="entry_deleted">Комбинация удалена</string>
     <string name="switch_to_signup">Нет аккаунта? Зарегистрируйтесь!</string>
+    <!-- Use in signUp activities -->
     <string name="signup_image_description">Иконка регистрации</string>
     <string name="join_us">Регистрируйтесь</string>
     <string name="signup_to_continue">Зарегистрируйтесь чтобы продолжить</string>
-    <string name="signup">Зарегистрироваться</string>
-    <string name="switch_to_login">Есть аккаунт? Войдите!</string>
     <string name="username">Имя</string>
     <string name="password">Пароль</string>
     <string name="get_username_and_password">Введите имя пользователя и пароль</string>
+    <string name="signup">Зарегистрироваться</string>
+    <string name="switch_to_login">Есть аккаунт? Войдите!</string>
     <!-- Use in profile info activity -->
-    <string name="not_update">Не обновлялось</string>
     <string name="profile">Профиль</string>
     <string name="base_information">Основная информация</string>
     <string name="id_field">ID:</string>
     <string name="name_field">Имя:</string>
     <string name="groups_field">Группы:</string>
-    <string name="settings">Настройки</string>
     <string name="edit_field">Редактирование задач:</string>
     <string name="notification_field">Уведомления:</string>
     <string name="interval_field">Интервал уведомлений:</string>
     <string name="excluded_field">Исключенные предметы:</string>
     <string name="complete_field">Выполненные задания</string>
     <string name="last_update_text">Последнее обновление:</string>
-    <string name="failed_load">Ошибка загрузки данных</string>
     <string name="on_notifications">Включены</string>
     <string name="off_notifications">Выключены</string>
+    <string name="not_update">Не обновлялось</string>
     <!-- Use in assignments activity -->
+    <string name="assignments">Задания</string>
     <string name="failed_load_assignments">Ошибка загрузки заданий</string>
     <string name="empty_assignments">Нету заданий</string>
     <string name="mark_as_completed">Отметить как выполненное</string>
-    <string name="sure_mark_as_completed">Вы уверены, что хотите отметить задание "%1$s" как выполненное?</string>
+    <string name="sure_mark_as_completed">Вы уверены, что хотите отметить задание \"%1$s\" как выполненное?</string>
     <string name="choose_assignment">Выберите задание чтобы пометить как не выполненное</string>
     <string name="have_no_completed_assignments">Нет выполненных заданий</string>
     <string name="have_not_choose_assignment">Задание не выбрано</string>
-    <string name="assignments">Задания</string>
     <!-- Use in group activity -->
-    <string name="have_not_choose_group">Группа не выбрана</string>
+    <string name="groups">Группы</string>
     <string name="failed_load_groups">Ошибка загрузки дисциплин</string>
     <string name="empty_groups">Нету групп</string>
     <string name="mark_as_exit">Выйти из группы</string>
-    <string name="sure_mark_as_exit">Вы уверены, что хотите вйти из группы "%1$s"?</string>
+    <string name="sure_mark_as_exit">Вы уверены, что хотите вйти из группы \"%1$s\"?</string>
     <string name="have_no_excluded_groups">Нет групп без вас</string>
     <string name="choose_group">Выберите группу для входа</string>
-    <string name="groups">Группы</string>
+    <string name="have_not_choose_group">Группа не выбрана</string>
     <!-- Use in subject activity -->
+    <string name="subjects">Дисциплины</string>
     <string name="failed_load_subjects">Ошибка загрузки дисциплин</string>
     <string name="empty_subjects">Нету дисциплин</string>
     <string name="mark_as_include">Разблокировать предмет</string>
+    <string name="sure_mark_as_include">Вы уверены, что хотите разблокировать дисциплину \"%1$s\"?</string>
     <string name="choose_subject">Выберите предмет чтобы заблокировать</string>
     <string name="have_not_choose_subject">Предмет не выбрана</string>
-    <string name="sure_mark_as_include">Вы уверены, что хотите разблокировать дисциплину "%1$s"?</string>
     <string name="have_no_excluded_subject">Нет заблокированных предметов</string>
-    <!-- Use in management -->
+    <!-- Use in settings activity -->
+    <string name="not_specified">Не задан</string>
+    <string-array name="time_units">
+        <item>сек.</item>
+        <item>мин.</item>
+        <item>час.</item>
+        <item>дн.</item>
+    </string-array>
+    <string name="interval_picker_title">Выберите интервал уведомлений</string>
+    <string name="token_dialog_title">Введите токен доступа</string>
+    <string name="token_dialog_confirm">Подтвердить</string>
+    <string name="edit_permission_message">У вас уже есть права на редактирование</string>
+    <!-- Use in management activity -->
     <string name="management">Управление</string>
     <string name="assignment_management">Управление заданиями</string>
     <string name="token_management">Управление токенами</string>
@@ -67,9 +85,46 @@
     <string name="generate_token">Сгенерировать токен</string>
     <string name="get_tokens">Осмотреть токены</string>
     <string name="subject_create">Создать предмет</string>
-    <string name="subject_delete">Удалить предмет</string>
     <string name="group_create">Создать группу</string>
     <string name="group_delete">Удалить группу</string>
+    <string name="not_selected">Не выбрано</string>
+    <string name="create_assignment">Создание задания</string>
+    <string name="deleting_assignments">Удаление заданий</string>
+    <string name="create_subject">Создание предмета</string>
+    <string name="subject_delete">Удаление предмета</string>
+    <string name="group_creation">Создание группы</string>
+    <string name="group_deletion">Удаление группы</string>
+    <string name="token_created">Токен создан</string>
+    <string name="your_tokens">Ваши токены</string>
+    <string name="sure_delete_token">Удалить токен?</string>
+    <string name="absolutely_sure_delete_token">Вы уверены, что хотите удалить токен \"%1$s\"?</string>
+    <string name="copy_token">Токен \"%1$s\" скопирован</string>
+    <string name="copy_token_simple">Токен скопирован</string>
+    <string name="deleted_token">Токен \"%1$s\" удален</string>
+    <string name="not_find_tokens">Токены не найдены</string>
+    <string name="you_have_no_tokens">У вас нет токенов</string>
+    <string name="enter_title_assignment">Введите название задания</string>
+    <string name="enter_description_assignment">Введите описание задания</string>
+    <string name="choose_subject_assignment">Выберите предмет</string>
+    <string name="enter_deadline_assignment">Введите дедлайн</string>
+    <string name="past_deadline">Дедлайн не может быть в прошлом</string>
+    <string name="error_date_format">Неверный формат даты</string>
+    <string name="choose_at_least_one_group">Выберите хотя бы одну группу</string>
+    <string name="no_subjects_in_system">Нет предметов в системе</string>
+    <string name="no_groups_in_system">Нет групп в системе</string>
+    <string name="have_no_filtering_assignments">Нет заданий по выбранным фильтрам</string>
+    <string name="error_forming_assignments">Ошибка формирования заданий</string>
+    <!-- use in errors -->
+    <string name="failed_load">Ошибка загрузки данных</string>
+    <string name="error_while_form_list">Ошибка формирования списка</string>
+    <string name="no_assignments_in_system">Нет заданий в системе</string>
+    <!-- use in menu -->
+    <string name="settings">Настройки</string>
+    <!-- use in filter -->
+    <string name="filters_settings">Настройка фильтров</string>
+    <string name="choose_deadline">Выберите дедлайн</string>
+    <string name="choose_deadline_time">Выберите время дедлайна</string>
+    <string name="choose_groups_filter">Выберите группы</string>
     <string name="enter_title">Введите название</string>
     <string name="title">Заголовок</string>
     <string name="description">Описание</string>
@@ -77,34 +132,30 @@
     <string name="choose_groups_simple">Выбрать группы</string>
     <string name="deadline">Дедлайн</string>
     <string name="choose_subject_manager">Выберите предмет</string>
+    <string name="enter_subject_name">Введите название предмета</string>
     <!-- Dialogs -->
     <string name="choose">Выберите из списка</string>
     <string name="Yes">Да</string>
     <string name="No">Нет</string>
+    <string name="apply">применить</string>
+    <string name="cancel">Отмена</string>
+    <string name="close">Закрыть</string>
+    <string name="delete">Удалить</string>
+    <string name="create">Создать</string>
+    <string name="OK">ОК</string>
 
 
 
-
-
-
-
+    <!-- unfiltered -->
     <string name="app_name">DeadlineDaemon</string>
+    <string name="enter_group_name">Введите название группы</string>
     <string name="network_error_ph">Ошибка сети: %1$s</string>
     <string name="network_error">Ошибка сети</string>
     <string name="last_update">Последнее обновление: %1$s</string>
-
-
-
-    <string name="not_specified">Не задан</string>
     <string name="have_not_rights">У вас не хватает прав для этой операции</string>
-
     <string name="groups_field_ph">Группы: %1$s</string>
-
     <string name="menu">Меню</string>
     <string name="base_sections">Основные разделы</string>
-
-    <string name="subjects">Дисциплины</string>
-
     <string name="actions">Действия</string>
     <string name="update_data">Обновить данные</string>
     <string name="add_assignment">Добавить задание</string>
@@ -123,15 +174,8 @@
     <string name="assignment_parsing_error">Ошибка при разборе заданий</string>
     <string name="nav_profile">Профиль</string>
     <string name="nav_settings">Настройки</string>
-
-
-
+    <string name="clear_date">Очистить дату</string>
     <string name="success_update">Успешно обновлена информация</string>
-
-
-
-
-    <string name="ok">ОК</string>
     <string name="choose_assignments">Выберите задания</string>
     <string name="choose_subjects">Выберите дисциплины</string>
     <string name="processing_pc">Обработка: %1$s</string>
@@ -147,11 +191,7 @@
     <string name="days_short">дн.</string>
     <string name="days_short_pc">%1$s дн.</string>
     <string name="days">Дни</string>
-    <string-array name="time_units">
-        <item>сек.</item>
-        <item>мин.</item>
-        <item>час.</item>
-        <item>дн.</item>
-    </string-array>
-
+    <string name="enter_token">Введите токен для получения прав редактирования:</string>
+    <string name="access_token">Токен доступа</string>
+    <string name="value">Значение</string>
 </resources>

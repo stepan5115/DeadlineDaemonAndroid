@@ -21,8 +21,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ru.zuevs5115.deadlinedaemon.R
 import ru.zuevs5115.deadlinedaemon.adapters.AssignmentAdapter
 import ru.zuevs5115.deadlinedaemon.databinding.ActivityAssignmentsBinding
-import ru.zuevs5115.deadlinedaemon.databinding.DialogCreateAssignmentBinding
-import ru.zuevs5115.deadlinedaemon.databinding.DialogDeleteAssignmentBinding
+import ru.zuevs5115.deadlinedaemon.databinding.DialogAssignmentBinding
 import ru.zuevs5115.deadlinedaemon.entities.Assignment
 import ru.zuevs5115.deadlinedaemon.entities.Group
 import ru.zuevs5115.deadlinedaemon.entities.Subject
@@ -43,11 +42,11 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
     private lateinit var drawerLayout: DrawerLayout
     //save adapter to update content of RecyclerView
     private lateinit var adapter: AssignmentAdapter
-    private var clearSubjects: Subject = Subject(-1, "\uD83D\uDEABНе выбрано")
+    private lateinit var clearSubjects: Subject
     private val FORMATER = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
     private var titleFilter: String? = null
     private var descriptionFilter: String? = null
-    private var subjectFilter: Subject? = clearSubjects
+    private var subjectFilter: Subject? = null
     private var groupsFilter: MutableList<Group> = mutableListOf()
     private var deadlineFilter: LocalDateTime? = null
 
@@ -56,6 +55,9 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
         super.onCreate(savedInstanceState)
         binding = ActivityAssignmentsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        //set up subject clear
+        clearSubjects = Subject(-1, getString(R.string.not_selected))
+        subjectFilter = clearSubjects
         //set content of RecyclerView (add processor for items)
         adapter = AssignmentAdapter(emptyList()) { assignment ->
             showMarkAsCompleteDialog(assignment)
@@ -105,50 +107,50 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
                 showCompletedAssignmentsDialog()
                 true
             }
-            //else make what you want
+            //configure the filter
             R.id.action_filter -> {
                 GetData.getAllSubjectsIndependenceUser(this, listOf(this::filterDialog))
                 true
             }
+            //else make what you want
             else -> super.onOptionsItemSelected(item)
         }
     }
+    //show filter dialog
     private fun filterDialog() {
-        val dialogBinding = DialogDeleteAssignmentBinding.inflate(LayoutInflater.from(this))
-
-        // Загрузка данных
+        val dialogBinding = DialogAssignmentBinding.inflate(LayoutInflater.from(this))
+        //fill data or toast that have no data
         if (SharedPrefs(this).getAllSubjects() == null) {
-            //так как без предметов не может быть и заданий
-            Toast.makeText(this, "Нету заданий в системе", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.no_assignments_in_system), Toast.LENGTH_SHORT).show()
             return
         }
+        //get all subjects
         val subjects = Parser.fromJsonToSubjects(SharedPrefs(this).getAllSubjects()!!).toMutableList()
+        //adding an subject will mean that the subject filter is disabled
         subjects.add(clearSubjects)
+        //get all groups
         val selectedGroups: MutableList<Group> = groupsFilter.toMutableList()
-        // Настройка Spinner для предметов
+        //set spinner for subjects
         val subjectAdapter = ArrayAdapter(
             this,
             android.R.layout.simple_dropdown_item_1line,
             subjects.map { it.name }
         )
         dialogBinding.spinnerSubject.setAdapter(subjectAdapter)
-
-        // Настройка выбора групп
+        //dialog for choose groups
         dialogBinding.btnSelectGroups.setOnClickListener {
             GetData.getAllGroupsIndependenceUserForAssignmentContext(this, listOf(this::showGroupSelectionDialog), selectedGroups, dialogBinding)
         }
-
-        // Настройка DatePicker для дедлайна
         dialogBinding.etDeadline.setOnClickListener {
             showDatePickerDialog(dialogBinding)
         }
-
+        //set up button clear
         val btnClearFilters: MaterialButton = dialogBinding.btnClearFilters
         btnClearFilters.setOnClickListener {
             deadlineFilter = null
             dialogBinding.etDeadline.text?.clear()
         }
-
+        //try get already apply filters
         dialogBinding.etAssignmentTitle.setText(titleFilter ?: "")
         dialogBinding.etAssignmentDescription.setText(descriptionFilter ?: "")
         if (subjectFilter != null) {
@@ -157,11 +159,12 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
         if (deadlineFilter != null) {
             dialogBinding.etDeadline.setText(FORMATER.format(deadlineFilter!!))
         }
+        //create dialog
         MaterialAlertDialogBuilder(this)
-            .setTitle("Настройка фильтров")
+            .setTitle(getString(R.string.filters_settings))
             .setView(dialogBinding.root)
-            .setNegativeButton("Отмена", null)
-            .setPositiveButton("применить") { _, _ ->
+            .setNegativeButton(getString(R.string.cancel), null)
+            .setPositiveButton(getString(R.string.apply)) { _, _ ->
                 val title = dialogBinding.etAssignmentTitle.text.toString()
                 val description = dialogBinding.etAssignmentDescription.text.toString()
                 val subject = subjects.find { it.name == dialogBinding.spinnerSubject.text.toString() }
@@ -173,6 +176,7 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
             .create()
             .show()
     }
+    //function that update filter information
     private fun setFilterSettings(title: String?, description: String?, subject: Subject?, selectedGroups: List<Group>,
                                   deadline: LocalDateTime?) {
         titleFilter = title
@@ -182,22 +186,25 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
         deadlineFilter = deadline
         updateRecyclerView()
     }
+    //crate group dialog
     private fun showGroupSelectionDialog(
         selectedGroups: MutableList<Group>
     ) {
+        //if no groups toast about it
         if (SharedPrefs(this).getAllGroups() == null) {
-            Toast.makeText(this, "Нету групп в системе", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.no_groups_in_system), Toast.LENGTH_SHORT).show()
             return
         }
         try {
+            //setup information about groups
             val groups = Parser.fromJsonToGroups(SharedPrefs(this).getAllGroups()!!).toList()
             val groupNames = groups.map { it.name }.toTypedArray()
             val checkedItems = groups.map { group ->
                 selectedGroups.any { it.id == group.id }
             }.toBooleanArray()
-
+            //create dialog for groups choose
             MaterialAlertDialogBuilder(this)
-                .setTitle("Выберите группы")
+                .setTitle(getString(R.string.choose_groups_filter))
                 .setMultiChoiceItems(groupNames, checkedItems) { _, which, isChecked ->
                     val selectedGroup = groups[which]
                     if (isChecked) {
@@ -208,47 +215,44 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
                         selectedGroups.removeAll { it.id == selectedGroup.id }
                     }
                 }
-                .setPositiveButton("OK") { _, _ -> }
+                .setPositiveButton(getString(R.string.Yes)) { _, _ -> }
                 .show()
         } catch (e: Throwable) {
-            Toast.makeText(this, "Ошибка при формировании списка групп", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_while_form_list), Toast.LENGTH_SHORT).show()
         }
     }
+    //show date picker dialog
     private fun showDatePickerDialog(dialogBinding: ViewBinding) {
+        //create date choose dialog
         val datePicker = MaterialDatePicker.Builder.datePicker()
-            .setTitleText("Выберите дедлайн")
+            .setTitleText(getString(R.string.choose_deadline))
             .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
             .build()
-
+        //set up OK result
         datePicker.addOnPositiveButtonClickListener { selectedDateMillis ->
             val calendar = java.util.Calendar.getInstance().apply {
                 timeInMillis = selectedDateMillis
             }
-
-            // Показываем TimePicker после выбора даты
             val hour = calendar.get(java.util.Calendar.HOUR_OF_DAY)
             val minute = calendar.get(java.util.Calendar.MINUTE)
-
+            //create time choose dialog
             val timePicker = android.app.TimePickerDialog(
                 this,
                 { _, selectedHour, selectedMinute ->
                     calendar.set(java.util.Calendar.HOUR_OF_DAY, selectedHour)
                     calendar.set(java.util.Calendar.MINUTE, selectedMinute)
-
-                    // Форматируем в строку
-                    if (dialogBinding is DialogCreateAssignmentBinding)
-                        dialogBinding.etDeadline.setText(FORMATER.format(calendar.time))
-                    if (dialogBinding is DialogDeleteAssignmentBinding)
+                    //set filter
+                    if (dialogBinding is DialogAssignmentBinding)
                         dialogBinding.etDeadline.setText(FORMATER.format(calendar.time))
                 },
                 hour,
                 minute,
-                true // 24-часовой формат
+                true //24-часовой формат
             )
-            timePicker.setTitle("Выберите время дедлайна")
+            timePicker.setTitle(getString(R.string.choose_deadline_time))
             timePicker.show()
         }
-
+        //show dialog
         datePicker.show(supportFragmentManager, "DATE_PICKER")
     }
     //setup navigation menu
@@ -329,7 +333,7 @@ class AssignmentsActivity : AppCompatActivity(), LoadingOverlayHandler {
             startActivity(Intent(this, ProfileInfoActivity::class.java))
             finish()
         }
-        //getAssignments
+        //getAssignments according filters
         val groupsName: List<String> = groupsFilter.map { it.name }
         var assignments = Parser.fromJsonToAssignments(json!!).toList()
         if ((titleFilter != null) && (titleFilter!!.isNotEmpty()))

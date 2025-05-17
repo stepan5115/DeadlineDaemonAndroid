@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Appbar menu with add and refresh -->
+<!-- Appbar menu with add and refresh and filter -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -16,6 +16,8 @@
         android:icon="@drawable/ic_add"
         android:title="@string/add_assignment"
         app:showAsAction="ifRoom" />
+
+    <!-- Кнопка для фильтрации -->
     <item
         android:id="@+id/action_filter"
         android:icon="@drawable/ic_filter"

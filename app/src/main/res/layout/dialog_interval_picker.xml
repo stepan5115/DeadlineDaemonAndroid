@@ -12,7 +12,7 @@
         android:layout_weight="1"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:hint="Значение"
+        android:hint="@string/value"
         android:backgroundTint="@color/colorOutline"/>
 
     <Spinner

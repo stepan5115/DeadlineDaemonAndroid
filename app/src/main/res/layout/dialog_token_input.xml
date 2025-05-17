@@ -6,7 +6,7 @@
     android:padding="16dp">
 
     <TextView
-        android:text="Введите токен для получения прав редактирования:"
+        android:text="@string/enter_token"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"/>
@@ -16,5 +16,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
-        android:hint="Токен доступа"/>
+        android:importantForAutofill="no"
+        android:hint="@string/access_token"/>
 </LinearLayout>

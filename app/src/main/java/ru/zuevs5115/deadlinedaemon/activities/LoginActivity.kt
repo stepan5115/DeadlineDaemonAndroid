@@ -3,16 +3,29 @@ package ru.zuevs5115.deadlinedaemon.activities
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.zuevs5115.deadlinedaemon.R
+import ru.zuevs5115.deadlinedaemon.database.AppDatabaseProvider
 import ru.zuevs5115.deadlinedaemon.databinding.ActivityLoginBinding
-import ru.zuevs5115.deadlinedaemon.utils.SharedPrefs
+import ru.zuevs5115.deadlinedaemon.entities.UserCredentials
 import ru.zuevs5115.deadlinedaemon.utils.ProfileLog
 
 //implement LoadingOverlayHandler to request Service show/hide our progress bar
 class LoginActivity : AppCompatActivity(), LoadingOverlayHandler {
     //binding for edit all elements
     private lateinit var binding: ActivityLoginBinding
+    //db
+    private val userDao by lazy {
+        AppDatabaseProvider.get(applicationContext).userDao()
+    }
+    private lateinit var allUsers: List<UserCredentials>
     //initial our UI
     override fun onCreate(savedInstanceState: Bundle?) {
         //base initial and remember binding
@@ -41,15 +54,55 @@ class LoginActivity : AppCompatActivity(), LoadingOverlayHandler {
             startActivity(intent)
             finish()
         }
-        //try get shared preferences
-        val (savedUser, savedPass) = SharedPrefs(this).getCredentials()
-        //try set all editText
-        if (!savedUser.isNullOrEmpty() && !savedPass.isNullOrEmpty()) {
-            binding.etUsername.setText(savedUser)
-            binding.etPassword.setText(savedPass)
-            //try log-in
-            binding.btnLogin.performClick()
+        //bind autoFill button
+        binding.btnAutoFill.setOnClickListener {
+            lifecycleScope.launch {
+                //try get all save combinations
+                val users = withContext(Dispatchers.IO) {
+                    userDao.getAll()
+                }
+                //if have no users toast about it
+                if (users.isEmpty()) {
+                    Toast.makeText(this@LoginActivity, getString(R.string.have_not_saved), Toast.LENGTH_SHORT).show()
+                } else {
+                    val items = users.map { "${it.username} / ${it.password}" }
+                    val adapter = ArrayAdapter(this@LoginActivity, android.R.layout.simple_list_item_1, items)
+                    //set up dialog for choose combination
+                    val dialog = AlertDialog.Builder(this@LoginActivity)
+                        .setTitle(getString(R.string.choose_user))
+                        .setAdapter(adapter) { _, which ->
+                            //try log in
+                            val selected = users[which]
+                            binding.etUsername.setText(selected.username)
+                            binding.etPassword.setText(selected.password)
+                            binding.btnLogin.performClick()
+                        }
+                        .setNegativeButton(getString(R.string.cancel), null)
+                        .create()
+                    //set up log click for delete
+                    dialog.listView.setOnItemLongClickListener { _, _, position, _ ->
+                        val userToDelete = users[position]
+                        AlertDialog.Builder(this@LoginActivity)
+                            .setTitle(getString(R.string.delete_entry))
+                            .setMessage(getString(R.string.delete_confirmation, userToDelete.username))
+                            .setPositiveButton(R.string.Yes) { _, _ ->
+                                lifecycleScope.launch {
+                                    withContext(Dispatchers.IO) {
+                                        userDao.delete(userToDelete.username, userToDelete.password)
+                                    }
+                                    Toast.makeText(this@LoginActivity, getString(R.string.entry_deleted), Toast.LENGTH_SHORT).show()
+                                    dialog.dismiss()
+                                }
+                            }
+                            .setNegativeButton(getString(R.string.No), null)
+                            .show()
+                        true
+                    }
+                    dialog.show()
+                }
+            }
         }
+
         //try get username and password from sign up activity if switch
         val username = intent.getStringExtra("username")
         val password = intent.getStringExtra("password")

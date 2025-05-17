@@ -3,7 +3,6 @@ package ru.zuevs5115.deadlinedaemon.activities
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -239,9 +238,9 @@ class SettingsActivity : AppCompatActivity(), LoadingOverlayHandler {
         }
         //make dialog
         AlertDialog.Builder(this)
-            .setTitle("Выберите интервал уведомлений")
+            .setTitle(getString(R.string.interval_picker_title))
             .setView(dialogView)
-            .setPositiveButton("OK") { _, _ ->
+            .setPositiveButton(getString(R.string.OK)) { _, _ ->
                 //get count
                 val value = editValue.text.toString().toLongOrNull() ?: 0L
                 //get measure
@@ -251,7 +250,7 @@ class SettingsActivity : AppCompatActivity(), LoadingOverlayHandler {
                 //make main action
                 updateNotificationInterval(seconds)
             }
-            .setNegativeButton("Отмена", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
     //make token dialog
@@ -262,9 +261,9 @@ class SettingsActivity : AppCompatActivity(), LoadingOverlayHandler {
         val editToken = dialogView.findViewById<EditText>(R.id.edit_token)
         //make dialog
         AlertDialog.Builder(this)
-            .setTitle("Введите токен доступа")
+            .setTitle(getString(R.string.token_dialog_title))
             .setView(dialogView)
-            .setPositiveButton("Подтвердить") { _, _ ->
+            .setPositiveButton(getString(R.string.token_dialog_confirm)) { _, _ ->
                 //get token form editText
                 val token = editToken.text.toString()
                 //if have token
@@ -273,7 +272,7 @@ class SettingsActivity : AppCompatActivity(), LoadingOverlayHandler {
                     onEditPermissionTokenEntered(token)
                 }
             }
-            .setNegativeButton("Отмена", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
     //main acton for set edit permission
@@ -290,7 +289,7 @@ class SettingsActivity : AppCompatActivity(), LoadingOverlayHandler {
         }
         //if already have, don't show dialog
         if (user?.canEditTasks == true) {
-            Toast.makeText(this, "У вас уже есть права на редактирование", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.edit_permission_message), Toast.LENGTH_SHORT).show()
             return
         }
         //else show dialog
@@ -306,7 +305,6 @@ class SettingsActivity : AppCompatActivity(), LoadingOverlayHandler {
     }
 
     private fun updateNotificationInterval(seconds: Long) {
-        // Измени поле User.notificationIntervalSeconds
         ProfileEditor.setIntervalService(seconds, this, listOf(this::tmp))
     }
 

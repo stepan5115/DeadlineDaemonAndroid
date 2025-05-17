@@ -41,7 +41,7 @@ object ProfileEditor {
                         //success
                         if (response.isSuccessful) {
                             //set lastUpdate and info
-                            val responseText = response.body()?.message ?: ""
+                            //val responseText = response.body()?.message ?: ""
                             //toast about success
                             //Toast.makeText(context, responseText, Toast.LENGTH_SHORT).show()
                             //do what user want
@@ -81,7 +81,7 @@ object ProfileEditor {
                         //success
                         if (response.isSuccessful) {
                             //set lastUpdate and info
-                            val responseText = response.body()?.message ?: ""
+                            //val responseText = response.body()?.message ?: ""
                             //toast about success
                             //Toast.makeText(context, responseText, Toast.LENGTH_SHORT).show()
                             //do what user want
@@ -121,7 +121,7 @@ object ProfileEditor {
                         //success
                         if (response.isSuccessful) {
                             //set lastUpdate and info
-                            val responseText = response.body()?.message ?: ""
+                            //val responseText = response.body()?.message ?: ""
                             //toast about success
                             //Toast.makeText(context, responseText, Toast.LENGTH_SHORT).show()
                             //do what user want
@@ -161,7 +161,7 @@ object ProfileEditor {
                         //success
                         if (response.isSuccessful) {
                             //set lastUpdate and info
-                            val responseText = response.body()?.message ?: ""
+                            //val responseText = response.body()?.message ?: ""
                             //toast about success
                             //Toast.makeText(context, responseText, Toast.LENGTH_SHORT).show()
                             //do what user want
@@ -201,7 +201,7 @@ object ProfileEditor {
                         //success
                         if (response.isSuccessful) {
                             //set lastUpdate and info
-                            val responseText = response.body()?.message ?: ""
+                            //val responseText = response.body()?.message ?: ""
                             //toast about success
                             //Toast.makeText(context, responseText, Toast.LENGTH_SHORT).show()
                             //do what user want
@@ -241,7 +241,7 @@ object ProfileEditor {
                         //success
                         if (response.isSuccessful) {
                             //set lastUpdate and info
-                            val responseText = response.body()?.message ?: ""
+                            //val responseText = response.body()?.message ?: ""
                             //toast about success
                             //Toast.makeText(context, responseText, Toast.LENGTH_SHORT).show()
                             //do what user want
@@ -281,7 +281,7 @@ object ProfileEditor {
                         //success
                         if (response.isSuccessful) {
                             //set lastUpdate and info
-                            val responseText = response.body()?.message ?: ""
+                            //val responseText = response.body()?.message ?: ""
                             //toast about success
                             //Toast.makeText(context, responseText, Toast.LENGTH_SHORT).show()
                             //do what user want
@@ -321,7 +321,7 @@ object ProfileEditor {
                         //success
                         if (response.isSuccessful) {
                             //set lastUpdate and info
-                            val responseText = response.body()?.message ?: ""
+                            //val responseText = response.body()?.message ?: ""
                             //toast about success
                             //Toast.makeText(context, responseText, Toast.LENGTH_SHORT).show()
                             //do what user want
@@ -361,7 +361,7 @@ object ProfileEditor {
                         //success
                         if (response.isSuccessful) {
                             //set lastUpdate and info
-                            val responseText = response.body()?.message ?: ""
+                            //val responseText = response.body()?.message ?: ""
                             //toast about success
                             //Toast.makeText(context, responseText, Toast.LENGTH_SHORT).show()
                             //do what user want
