@@ -15,14 +15,15 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <!-- Toolbar -->
+            <!-- AppBar с кнопкой обновления -->
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar"
-                app:title="@string/management"/>
+                android:background="@color/colorPrimary"
+                app:title="@string/management"
+                app:titleTextColor="@color/colorOnPrimary"
+                app:menu="@menu/appbar_refresh"/>
 
             <ScrollView
                 android:background="@color/colorBackground"

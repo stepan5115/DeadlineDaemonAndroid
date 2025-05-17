@@ -3,13 +3,17 @@ package ru.zuevs5115.deadlinedaemon.activities
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
@@ -28,6 +32,7 @@ import ru.zuevs5115.deadlinedaemon.entities.Subject
 import ru.zuevs5115.deadlinedaemon.utils.EditData
 import ru.zuevs5115.deadlinedaemon.utils.GetData
 import ru.zuevs5115.deadlinedaemon.utils.Parser
+import ru.zuevs5115.deadlinedaemon.utils.ProfileUpdater
 import ru.zuevs5115.deadlinedaemon.utils.SharedPrefs
 import ru.zuevs5115.deadlinedaemon.utils.TimeFormatter
 import java.text.SimpleDateFormat
@@ -39,6 +44,8 @@ import java.util.Locale
 class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
     //create binding for set up
     private lateinit var binding: ActivityManagementBinding
+    //remember to open/close menu
+    private lateinit var drawerLayout: DrawerLayout
     //format for work with date
     private val format = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
     //subject that mean no filter by subject
@@ -50,9 +57,87 @@ class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
         setContentView(binding.root)
         //setUp clear subject
         clearSubjects = Subject(-1, getString(R.string.not_selected))
+        //set toolbar and save drawerLayout to close/open menu if we need
+        setSupportActionBar(binding.toolbar)
+        drawerLayout = binding.drawerLayout
+        //init burger menu
+        supportActionBar?.apply {
+            //add "button" to actionBar
+            setDisplayHomeAsUpEnabled(true)
+            //set image (burger)
+            setHomeAsUpIndicator(R.drawable.ic_menu)
+        }
+        //setup menu
+        setupNavigation()
+        //set up buttons
         setupButtons()
     }
-
+    //setup navigation menu
+    private fun setupNavigation() {
+        //set actions for all menu items
+        binding.navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_profile -> {
+                    //start profile info activity and finish itself
+                    startActivity(Intent(this, ProfileInfoActivity::class.java))
+                    finish()
+                }
+                R.id.nav_tasks -> {
+                    //start activity assignments and finish itself
+                    startActivity(Intent(this, AssignmentsActivity::class.java))
+                    finish()
+                }
+                R.id.nav_management -> {
+                    //already there
+                }
+                R.id.nav_settings -> {
+                    //start activity settings and finish itself
+                    startActivity(Intent(this, SettingsActivity::class.java))
+                    finish()
+                }
+                R.id.nav_subjects -> {
+                    //start activity subject and finish itself
+                    startActivity(Intent(this, SubjectsActivity::class.java))
+                    finish()
+                }
+                R.id.nav_groups -> {
+                    //start activity groups and finish itself
+                    startActivity(Intent(this, GroupsActivity::class.java))
+                    finish()
+                }
+                R.id.nav_refresh -> {
+                    //update information (make request)
+                    ProfileUpdater.updateProfileData(this, listOf())
+                }
+                R.id.nav_logout -> {
+                    //logout
+                    logout()
+                }
+            }
+            //close menu where item selected
+            drawerLayout.closeDrawer(GravityCompat.START)
+            true
+        }
+    }
+    //setup actions for each button in toolbar
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        //set toolbar actions
+        return when (item.itemId) {
+            android.R.id.home -> {
+                //open menu
+                drawerLayout.openDrawer(GravityCompat.START)
+                true
+            }
+            R.id.action_refresh -> {
+                //refresh data
+                ProfileUpdater.updateProfileData(this, listOf())
+                true
+            }
+            //make what you want
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+    //set up buttons
     private fun setupButtons() {
         //setUp buttons
         binding.buttonCreateAssignment.setOnClickListener { GetData.getAllSubjectsIndependenceUser(this,
@@ -524,6 +609,26 @@ class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
         layout?.let {
             it.error = message
             it.isErrorEnabled = true
+        }
+    }
+    //logout
+    private fun logout() {
+        //clear login information
+        SharedPrefs(this).clearInformation()
+        //go to login
+        startActivity(Intent(this, LoginActivity::class.java))
+        finish()
+    }
+    //if back button pressed
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        //if toolbar "button" pressed then open/close menu
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            //else go to login and clear information
+            startActivity(Intent(this, ProfileInfoActivity::class.java))
+            finish()
         }
     }
     //show progress bar

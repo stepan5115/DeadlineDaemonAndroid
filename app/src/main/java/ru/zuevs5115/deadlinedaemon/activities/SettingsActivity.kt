@@ -79,6 +79,28 @@ class SettingsActivity : AppCompatActivity(), LoadingOverlayHandler {
                     startActivity(Intent(this, GroupsActivity::class.java))
                     finish()
                 }
+                R.id.nav_management -> {
+                    //start activity management if have rights or toast  about haven't enough rights
+                    val tmp: String? = SharedPrefs(this).getInfo()
+                    if (tmp == null)
+                        Toast.makeText(
+                            this,
+                            getString(R.string.can_not_find_user),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    else {
+                        val user = Parser.fromJsonToUser(tmp)
+                        if (user.canEditTasks) {
+                            startActivity(Intent(this, ManagementActivity::class.java))
+                            finish()
+                        } else
+                            Toast.makeText(
+                                this,
+                                getString(R.string.you_have_not_rights),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                    }
+                }
                 //update information (make request)
                 R.id.nav_refresh -> {
                     ProfileUpdater.updateProfileData(this, listOf(this::fillDefaultValues))

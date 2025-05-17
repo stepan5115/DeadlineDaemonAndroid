@@ -194,4 +194,6 @@
     <string name="enter_token">Введите токен для получения прав редактирования:</string>
     <string name="access_token">Токен доступа</string>
     <string name="value">Значение</string>
+    <string name="can_not_find_user">пользователь не найден</string>
+    <string name="you_have_not_rights">у вас нет прав</string>
 </resources>
