@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
@@ -71,6 +72,12 @@ class ManagementActivity : AppCompatActivity(), LoadingOverlayHandler {
         setupNavigation()
         //set up buttons
         setupButtons()
+    }
+    //load menu xml
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        //make menu from xml
+        menuInflater.inflate(R.menu.appbar_refresh, menu)
+        return true
     }
     //setup navigation menu
     private fun setupNavigation() {
